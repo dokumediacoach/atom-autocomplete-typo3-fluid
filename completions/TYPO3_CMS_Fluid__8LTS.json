@@ -1,0 +1,2532 @@
+{
+  "viewHelpers": {
+    "be.buttons.csh": {
+      "properties": {
+        "wrap": {
+          "description": "Markup to wrap around the CSH, split by \"|\""
+        },
+        "table": {
+          "description": "Table name ('_MOD_'+module name). If not set, the current module name will be used"
+        },
+        "field": {
+          "description": "Field name (CSH locallang main key)"
+        }
+      },
+      "description": "View helper which returns CSH (context sensitive help) button with icon"
+    },
+    "format.number": {
+      "properties": {
+        "decimals": {
+          "description": "The number of digits after the decimal point"
+        },
+        "thousandsSeparator": {
+          "description": "The character for grouping the thousand digits"
+        },
+        "decimalSeparator": {
+          "description": "The decimal point character"
+        }
+      },
+      "description": "Formats a number with custom precision, decimal point and grouped thousands."
+    },
+    "uri.typolink": {
+      "mandatoryProperties": [
+        "parameter"
+      ],
+      "properties": {
+        "useCacheHash": {
+          "description": ""
+        },
+        "parameter": {
+          "description": "stdWrap.typolink style parameter string"
+        },
+        "additionalParams": {
+          "description": "stdWrap.typolink additionalParams"
+        }
+      },
+      "description": "A ViewHelper to create uris from fields supported by the link wizard"
+    },
+    "widget.paginate": {
+      "mandatoryProperties": [
+        "objects",
+        "as"
+      ],
+      "properties": {
+        "customWidgetId": {
+          "description": "extend the widget identifier with a custom widget id"
+        },
+        "as": {
+          "description": "as"
+        },
+        "objects": {
+          "description": "Object"
+        },
+        "configuration": {
+          "description": "configuration"
+        }
+      },
+      "description": "This ViewHelper renders a Pagination of objects."
+    },
+    "be.tableList": {
+      "mandatoryProperties": [
+        "tableName"
+      ],
+      "properties": {
+        "readOnly": {
+          "description": "if TRUE, the edit icons won't be shown. Otherwise edit icons will be shown, if the current BE user has edit rights for the specified table!"
+        },
+        "enableClickMenu": {
+          "description": "enables context menu"
+        },
+        "recordsPerPage": {
+          "description": "amount of records to be displayed at once. Defaults to $TCA[$tableName]['interface']['maxSingleDBListItems'] or (if that's not set) to 100"
+        },
+        "levels": {
+          "description": "corresponds to the level selector of the TYPO3 list module. By default only records from the current storagePid are fetched"
+        },
+        "storagePid": {
+          "description": "by default, records are fetched from the storage PID configured in persistence.storagePid. With this argument, the storage PID can be overwritten"
+        },
+        "clickTitleMode": {
+          "description": "one of \"edit\", \"show\" (only pages, tt_content), \"info"
+        },
+        "sortDescending": {
+          "description": "if TRUE records will be sorted in descending order"
+        },
+        "fieldList": {
+          "description": "list of fields to be displayed. If empty, only the title column (configured in $TCA[$tableName]['ctrl']['title']) is shown"
+        },
+        "filter": {
+          "description": "corresponds to the \"Search String\" textbox of the TYPO3 list module. If not empty, only records matching the string will be fetched"
+        },
+        "tableName": {
+          "description": "name of the database table"
+        },
+        "sortField": {
+          "description": "table field to sort the results by"
+        }
+      },
+      "description": "View helper which renders a record list as known from the TYPO3 list module"
+    },
+    "form.submit": {
+      "properties": {
+        "onclick": {
+          "description": "JavaScript evaluated for the onclick event"
+        },
+        "data": {
+          "description": "Additional data-* attributes. They will each be added with a \"data-\" prefix."
+        },
+        "name": {
+          "description": "Name of input tag"
+        },
+        "dir": {
+          "description": "Text direction for this HTML element. Allowed strings: \"ltr\" (left to right), \"rtl\" (right to left)"
+        },
+        "lang": {
+          "description": "Language for this element. Use short names specified in RFC 1766"
+        },
+        "value": {
+          "description": "Value of input tag"
+        },
+        "style": {
+          "description": "Individual CSS styles for this element"
+        },
+        "property": {
+          "description": "Name of Object Property. If used in conjunction with <f:form object=\"...\">, \"name\" and \"value\" properties will be ignored."
+        },
+        "class": {
+          "description": "CSS class(es) for this element"
+        },
+        "title": {
+          "description": "Tooltip text of element"
+        },
+        "id": {
+          "description": "Unique (in this file) identifier for this HTML element."
+        },
+        "accesskey": {
+          "description": "Keyboard shortcut to access this element"
+        },
+        "disabled": {
+          "description": "Specifies that the input element should be disabled when the page loads"
+        },
+        "tabindex": {
+          "description": "Specifies the tab order of this element"
+        },
+        "additionalAttributes": {
+          "description": "Additional tag attributes. They will be added directly to the resulting HTML tag."
+        }
+      },
+      "description": "Creates a submit button."
+    },
+    "cObject": {
+      "mandatoryProperties": [
+        "typoscriptObjectPath"
+      ],
+      "properties": {
+        "currentValueKey": {
+          "description": "currentValueKey"
+        },
+        "data": {
+          "description": "the data to be used for rendering the cObject. Can be an object, array or string. If this argument is not set, child nodes will be used"
+        },
+        "table": {
+          "description": "the table name associated with \"data\" argument. Typically tt_content or one of your custom tables. This argument should be set if rendering a FILES cObject where file references are used, or if the data argument is a database record."
+        },
+        "typoscriptObjectPath": {
+          "description": "the TypoScript setup path of the TypoScript object to render"
+        }
+      },
+      "description": "This ViewHelper renders CObjects from the global TypoScript configuration."
+    },
+    "widget.uri": {
+      "properties": {
+        "ajax": {
+          "description": "TRUE if the URI should be to an AJAX widget, FALSE otherwise."
+        },
+        "section": {
+          "description": "The anchor to be added to the URI"
+        },
+        "arguments": {
+          "description": "Arguments"
+        },
+        "action": {
+          "description": "Target action"
+        },
+        "format": {
+          "description": "The requested format, e.g. \".html"
+        },
+        "addQueryStringMethod": {
+          "description": "Method to be used for query string"
+        }
+      },
+      "description": "A view helper for creating URIs to extbase actions within widgets."
+    },
+    "format.html": {
+      "properties": {
+        "parseFuncTSPath": {
+          "description": "path to TypoScript parseFunc setup."
+        }
+      },
+      "description": "Renders a string by passing it to a TYPO3 parseFunc."
+    },
+    "link.page": {
+      "properties": {
+        "noCache": {
+          "description": "set this to disable caching for the target page. You should not need this."
+        },
+        "pageUid": {
+          "description": "target page. See TypoLink destination"
+        },
+        "section": {
+          "description": "the anchor to be added to the URI"
+        },
+        "pageType": {
+          "description": "type of the target page. See typolink.parameter"
+        },
+        "onclick": {
+          "description": "JavaScript evaluated for the onclick event"
+        },
+        "data": {
+          "description": "Additional data-* attributes. They will each be added with a \"data-\" prefix."
+        },
+        "linkAccessRestrictedPages": {
+          "description": "If set, links pointing to access restricted pages will still link to the page even though the page cannot be accessed."
+        },
+        "dir": {
+          "description": "Text direction for this HTML element. Allowed strings: \"ltr\" (left to right), \"rtl\" (right to left)"
+        },
+        "additionalParams": {
+          "description": "query parameters to be attached to the resulting URI"
+        },
+        "lang": {
+          "description": "Language for this element. Use short names specified in RFC 1766"
+        },
+        "noCacheHash": {
+          "description": "set this to suppress the cHash query parameter created by TypoLink. You should not need this."
+        },
+        "argumentsToBeExcludedFromQueryString": {
+          "description": "arguments to be removed from the URI. Only active if $addQueryString = TRUE"
+        },
+        "target": {
+          "description": "Target of link"
+        },
+        "style": {
+          "description": "Individual CSS styles for this element"
+        },
+        "absolute": {
+          "description": "If set, the URI of the rendered link is absolute"
+        },
+        "class": {
+          "description": "CSS class(es) for this element"
+        },
+        "title": {
+          "description": "Tooltip text of element"
+        },
+        "addQueryString": {
+          "description": "If set, the current query parameters will be kept in the URI"
+        },
+        "rel": {
+          "description": "Specifies the relationship between the current document and the linked document"
+        },
+        "addQueryStringMethod": {
+          "description": "Set which parameters will be kept. Only active if $addQueryString = TRUE"
+        },
+        "id": {
+          "description": "Unique (in this file) identifier for this HTML element."
+        },
+        "accesskey": {
+          "description": "Keyboard shortcut to access this element"
+        },
+        "tabindex": {
+          "description": "Specifies the tab order of this element"
+        },
+        "additionalAttributes": {
+          "description": "Additional tag attributes. They will be added directly to the resulting HTML tag."
+        }
+      },
+      "description": "A view helper for creating links to TYPO3 pages."
+    },
+    "format.htmlentities": {
+      "properties": {
+        "doubleEncode": {
+          "description": "If FALSE existing html entities won't be encoded, the default is to convert everything."
+        },
+        "value": {
+          "description": "string to format"
+        },
+        "encoding": {
+          "description": ""
+        },
+        "keepQuotes": {
+          "description": "If TRUE, single and double quotes won't be replaced (sets ENT_NOQUOTES flag)."
+        }
+      },
+      "description": "Applies htmlentities() escaping to a value"
+    },
+    "or": {
+      "properties": {
+        "alternative": {
+          "description": "Alternative if content is empty"
+        },
+        "arguments": {
+          "description": "Arguments to be replaced in the resulting string, using sprintf"
+        },
+        "content": {
+          "description": "Content to check if empty"
+        }
+      },
+      "description": "If content is empty use alternative text"
+    },
+    "form.textfield": {
+      "properties": {
+        "size": {
+          "description": "The size of the input field"
+        },
+        "readonly": {
+          "description": "The readonly attribute of the input field"
+        },
+        "autofocus": {
+          "description": "Specifies that an input should automatically get focus when the page loads"
+        },
+        "onclick": {
+          "description": "JavaScript evaluated for the onclick event"
+        },
+        "maxlength": {
+          "description": "The maxlength attribute of the input field (will not be validated)"
+        },
+        "data": {
+          "description": "Additional data-* attributes. They will each be added with a \"data-\" prefix."
+        },
+        "name": {
+          "description": "Name of input tag"
+        },
+        "dir": {
+          "description": "Text direction for this HTML element. Allowed strings: \"ltr\" (left to right), \"rtl\" (right to left)"
+        },
+        "lang": {
+          "description": "Language for this element. Use short names specified in RFC 1766"
+        },
+        "errorClass": {
+          "description": "CSS class to set if there are errors for this view helper"
+        },
+        "pattern": {
+          "description": "HTML5 validation pattern"
+        },
+        "value": {
+          "description": "Value of input tag"
+        },
+        "style": {
+          "description": "Individual CSS styles for this element"
+        },
+        "placeholder": {
+          "description": "The placeholder of the textfield"
+        },
+        "property": {
+          "description": "Name of Object Property. If used in conjunction with <f:form object=\"...\">, \"name\" and \"value\" properties will be ignored."
+        },
+        "class": {
+          "description": "CSS class(es) for this element"
+        },
+        "title": {
+          "description": "Tooltip text of element"
+        },
+        "type": {
+          "description": "The field type, e.g. \"text\", \"email\", \"url\" etc."
+        },
+        "id": {
+          "description": "Unique (in this file) identifier for this HTML element."
+        },
+        "accesskey": {
+          "description": "Keyboard shortcut to access this element"
+        },
+        "disabled": {
+          "description": "Specifies that the input element should be disabled when the page loads"
+        },
+        "tabindex": {
+          "description": "Specifies the tab order of this element"
+        },
+        "additionalAttributes": {
+          "description": "Additional tag attributes. They will be added directly to the resulting HTML tag."
+        },
+        "required": {
+          "description": "If the field is required or not"
+        }
+      },
+      "description": "View Helper which creates a text field (<input type=\"text\">)."
+    },
+    "form": {
+      "properties": {
+        "method": {
+          "description": "Transfer type (GET or POST)"
+        },
+        "noCache": {
+          "description": "set this to disable caching for the target page. You should not need this."
+        },
+        "pageUid": {
+          "description": "Target page uid"
+        },
+        "section": {
+          "description": "The anchor to be added to the action URI (only active if $actionUri is not set)"
+        },
+        "pageType": {
+          "description": "Target page type"
+        },
+        "onclick": {
+          "description": "JavaScript evaluated for the onclick event"
+        },
+        "objectName": {
+          "description": "name of the object that is bound to this form. If this argument is not specified, the name attribute of this form is used to determine the FormObjectName"
+        },
+        "extensionName": {
+          "description": "Target Extension Name (without \"tx_\" prefix and no underscores). If NULL the current extension name is used"
+        },
+        "data": {
+          "description": "Additional data-* attributes. They will each be added with a \"data-\" prefix."
+        },
+        "name": {
+          "description": "Name of form"
+        },
+        "dir": {
+          "description": "Text direction for this HTML element. Allowed strings: \"ltr\" (left to right), \"rtl\" (right to left)"
+        },
+        "additionalParams": {
+          "description": "additional action URI query parameters that won't be prefixed like $arguments (overrule $arguments) (only active if $actionUri is not set)"
+        },
+        "lang": {
+          "description": "Language for this element. Use short names specified in RFC 1766"
+        },
+        "noCacheHash": {
+          "description": "set this to suppress the cHash query parameter created by TypoLink. You should not need this."
+        },
+        "onreset": {
+          "description": "JavaScript: On reset of the form"
+        },
+        "argumentsToBeExcludedFromQueryString": {
+          "description": "arguments to be removed from the action URI. Only active if $addQueryString = TRUE and $actionUri is not set"
+        },
+        "target": {
+          "description": "Target attribute of the form"
+        },
+        "style": {
+          "description": "Individual CSS styles for this element"
+        },
+        "hiddenFieldClassName": {
+          "description": "hiddenFieldClassName"
+        },
+        "enctype": {
+          "description": "MIME type with which the form is submitted"
+        },
+        "arguments": {
+          "description": "Arguments"
+        },
+        "action": {
+          "description": "Target action"
+        },
+        "actionUri": {
+          "description": "can be used to overwrite the \"action\" attribute of the form tag"
+        },
+        "absolute": {
+          "description": "If set, an absolute action URI is rendered (only active if $actionUri is not set)"
+        },
+        "fieldNamePrefix": {
+          "description": "Prefix that will be added to all field names within this form. If not set the prefix will be tx_yourExtension_plugin"
+        },
+        "onsubmit": {
+          "description": "JavaScript: On submit of the form"
+        },
+        "format": {
+          "description": "The requested format (e.g. \".html\") of the target page (only active if $actionUri is not set)"
+        },
+        "class": {
+          "description": "CSS class(es) for this element"
+        },
+        "title": {
+          "description": "Tooltip text of element"
+        },
+        "addQueryString": {
+          "description": "If set, the current query parameters will be kept in the action URI (only active if $actionUri is not set)"
+        },
+        "addQueryStringMethod": {
+          "description": "Method to use when keeping query parameters (GET or POST, only active if $actionUri is not set"
+        },
+        "id": {
+          "description": "Unique (in this file) identifier for this HTML element."
+        },
+        "accesskey": {
+          "description": "Keyboard shortcut to access this element"
+        },
+        "controller": {
+          "description": "Target controller"
+        },
+        "tabindex": {
+          "description": "Specifies the tab order of this element"
+        },
+        "pluginName": {
+          "description": "Target plugin. If empty, the current plugin name is used"
+        },
+        "additionalAttributes": {
+          "description": "Additional tag attributes. They will be added directly to the resulting HTML tag."
+        },
+        "object": {
+          "description": "Object to use for the form. Use in conjunction with the \"property\" attribute on the sub tags"
+        }
+      },
+      "description": "Form view helper. Generates a <form> Tag."
+    },
+    "form.textarea": {
+      "properties": {
+        "autofocus": {
+          "description": "Specifies that a text area should automatically get focus when the page loads"
+        },
+        "onclick": {
+          "description": "JavaScript evaluated for the onclick event"
+        },
+        "data": {
+          "description": "Additional data-* attributes. They will each be added with a \"data-\" prefix."
+        },
+        "name": {
+          "description": "Name of input tag"
+        },
+        "dir": {
+          "description": "Text direction for this HTML element. Allowed strings: \"ltr\" (left to right), \"rtl\" (right to left)"
+        },
+        "lang": {
+          "description": "Language for this element. Use short names specified in RFC 1766"
+        },
+        "errorClass": {
+          "description": "CSS class to set if there are errors for this view helper"
+        },
+        "value": {
+          "description": "Value of input tag"
+        },
+        "style": {
+          "description": "Individual CSS styles for this element"
+        },
+        "placeholder": {
+          "description": "The placeholder of the textarea"
+        },
+        "cols": {
+          "description": "The number of columns of a text area"
+        },
+        "property": {
+          "description": "Name of Object Property. If used in conjunction with <f:form object=\"...\">, \"name\" and \"value\" properties will be ignored."
+        },
+        "class": {
+          "description": "CSS class(es) for this element"
+        },
+        "title": {
+          "description": "Tooltip text of element"
+        },
+        "rows": {
+          "description": "The number of rows of a text area"
+        },
+        "id": {
+          "description": "Unique (in this file) identifier for this HTML element."
+        },
+        "accesskey": {
+          "description": "Keyboard shortcut to access this element"
+        },
+        "disabled": {
+          "description": "Specifies that the input element should be disabled when the page loads"
+        },
+        "tabindex": {
+          "description": "Specifies the tab order of this element"
+        },
+        "additionalAttributes": {
+          "description": "Additional tag attributes. They will be added directly to the resulting HTML tag."
+        }
+      },
+      "description": "Textarea view helper."
+    },
+    "widget.link": {
+      "properties": {
+        "ajax": {
+          "description": "TRUE if the URI should be to an AJAX widget, FALSE otherwise."
+        },
+        "rev": {
+          "description": "Specifies the relationship between the linked document and the current document"
+        },
+        "section": {
+          "description": "The anchor to be added to the URI"
+        },
+        "onclick": {
+          "description": "JavaScript evaluated for the onclick event"
+        },
+        "data": {
+          "description": "Additional data-* attributes. They will each be added with a \"data-\" prefix."
+        },
+        "name": {
+          "description": "Specifies the name of an anchor"
+        },
+        "dir": {
+          "description": "Text direction for this HTML element. Allowed strings: \"ltr\" (left to right), \"rtl\" (right to left)"
+        },
+        "lang": {
+          "description": "Language for this element. Use short names specified in RFC 1766"
+        },
+        "target": {
+          "description": "Specifies where to open the linked document"
+        },
+        "style": {
+          "description": "Individual CSS styles for this element"
+        },
+        "arguments": {
+          "description": "Arguments"
+        },
+        "action": {
+          "description": "Target action"
+        },
+        "format": {
+          "description": "The requested format, e.g. \".html"
+        },
+        "class": {
+          "description": "CSS class(es) for this element"
+        },
+        "title": {
+          "description": "Tooltip text of element"
+        },
+        "rel": {
+          "description": "Specifies the relationship between the current document and the linked document"
+        },
+        "addQueryStringMethod": {
+          "description": "Method to be used for query string"
+        },
+        "id": {
+          "description": "Unique (in this file) identifier for this HTML element."
+        },
+        "accesskey": {
+          "description": "Keyboard shortcut to access this element"
+        },
+        "tabindex": {
+          "description": "Specifies the tab order of this element"
+        },
+        "additionalAttributes": {
+          "description": "Additional tag attributes. They will be added directly to the resulting HTML tag."
+        }
+      },
+      "description": "A view helper for creating Links to extbase actions within widets."
+    },
+    "security.ifAuthenticated": {
+      "properties": {
+        "else": {
+          "description": "Value to be returned if the condition if not met."
+        },
+        "condition": {
+          "description": "Condition expression conforming to Fluid boolean rules"
+        },
+        "then": {
+          "description": "Value to be returned if the condition if met."
+        }
+      },
+      "description": "This view helper implements an ifAuthenticated\/else condition for FE users\/groups."
+    },
+    "media": {
+      "mandatoryProperties": [
+        "file"
+      ],
+      "properties": {
+        "width": {
+          "description": "This can be a numeric value representing the fixed width of in pixels. But you can also perform simple calculations by adding \"m\" or \"c\" to the value. See imgResource.width for possible options."
+        },
+        "height": {
+          "description": "This can be a numeric value representing the fixed height in pixels. But you can also perform simple calculations by adding \"m\" or \"c\" to the value. See imgResource.width for possible options."
+        },
+        "alt": {
+          "description": "Specifies an alternate text for an image"
+        },
+        "additionalConfig": {
+          "description": "This array can hold additional configuration that is passed though to the Renderer object"
+        },
+        "onclick": {
+          "description": "JavaScript evaluated for the onclick event"
+        },
+        "data": {
+          "description": "Additional data-* attributes. They will each be added with a \"data-\" prefix."
+        },
+        "dir": {
+          "description": "Text direction for this HTML element. Allowed strings: \"ltr\" (left to right), \"rtl\" (right to left)"
+        },
+        "lang": {
+          "description": "Language for this element. Use short names specified in RFC 1766"
+        },
+        "style": {
+          "description": "Individual CSS styles for this element"
+        },
+        "cropVariant": {
+          "description": "select a cropping variant, in case multiple croppings have been specified or stored in FileReference"
+        },
+        "class": {
+          "description": "CSS class(es) for this element"
+        },
+        "title": {
+          "description": "Tooltip text of element"
+        },
+        "id": {
+          "description": "Unique (in this file) identifier for this HTML element."
+        },
+        "accesskey": {
+          "description": "Keyboard shortcut to access this element"
+        },
+        "file": {
+          "description": "File"
+        },
+        "tabindex": {
+          "description": "Specifies the tab order of this element"
+        },
+        "additionalAttributes": {
+          "description": "Additional tag attributes. They will be added directly to the resulting HTML tag."
+        }
+      },
+      "description": "Render a given media file with the correct html tag."
+    },
+    "form.password": {
+      "properties": {
+        "size": {
+          "description": "The size of the input field"
+        },
+        "readonly": {
+          "description": "The readonly attribute of the input field"
+        },
+        "onclick": {
+          "description": "JavaScript evaluated for the onclick event"
+        },
+        "maxlength": {
+          "description": "The maxlength attribute of the input field (will not be validated)"
+        },
+        "data": {
+          "description": "Additional data-* attributes. They will each be added with a \"data-\" prefix."
+        },
+        "name": {
+          "description": "Name of input tag"
+        },
+        "dir": {
+          "description": "Text direction for this HTML element. Allowed strings: \"ltr\" (left to right), \"rtl\" (right to left)"
+        },
+        "lang": {
+          "description": "Language for this element. Use short names specified in RFC 1766"
+        },
+        "errorClass": {
+          "description": "CSS class to set if there are errors for this view helper"
+        },
+        "value": {
+          "description": "Value of input tag"
+        },
+        "style": {
+          "description": "Individual CSS styles for this element"
+        },
+        "placeholder": {
+          "description": "The placeholder of the textfield"
+        },
+        "property": {
+          "description": "Name of Object Property. If used in conjunction with <f:form object=\"...\">, \"name\" and \"value\" properties will be ignored."
+        },
+        "class": {
+          "description": "CSS class(es) for this element"
+        },
+        "title": {
+          "description": "Tooltip text of element"
+        },
+        "id": {
+          "description": "Unique (in this file) identifier for this HTML element."
+        },
+        "accesskey": {
+          "description": "Keyboard shortcut to access this element"
+        },
+        "disabled": {
+          "description": "Specifies that the input element should be disabled when the page loads"
+        },
+        "tabindex": {
+          "description": "Specifies the tab order of this element"
+        },
+        "additionalAttributes": {
+          "description": "Additional tag attributes. They will be added directly to the resulting HTML tag."
+        }
+      },
+      "description": "View Helper which creates a simple Password Text Box (<input type=\"password\">)."
+    },
+    "security.ifHasRole": {
+      "properties": {
+        "role": {
+          "description": "The usergroup (either the usergroup uid or its title)."
+        }
+      },
+      "description": "This view helper implements an ifHasRole\/else condition for FE users\/groups."
+    },
+    "section": {
+      "mandatoryProperties": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "description": "Name of the section"
+        }
+      },
+      "description": "A ViewHelper to declare sections in templates for later use with e.g. the RenderViewHelper."
+    },
+    "format.date": {
+      "properties": {
+        "date": {
+          "description": "Either an object implementing DateTimeInterface or a string that is accepted by DateTime constructor"
+        },
+        "base": {
+          "description": "A base time (an object implementing DateTimeInterface or a string) used if $date is a relative date specification. Defaults to current time."
+        },
+        "format": {
+          "description": "Format String which is taken to format the Date\/Time"
+        }
+      },
+      "description": "Formats an object implementing \\DateTimeInterface."
+    },
+    "cycle": {
+      "mandatoryProperties": [
+        "as"
+      ],
+      "properties": {
+        "values": {
+          "description": "The array or object implementing \\ArrayAccess (for example \\SplObjectStorage) to iterated over"
+        },
+        "as": {
+          "description": "The name of the iteration variable"
+        }
+      },
+      "description": "This ViewHelper cycles through the specified values."
+    },
+    "form.select": {
+      "properties": {
+        "size": {
+          "description": "Size of input field"
+        },
+        "selectAllByDefault": {
+          "description": "If specified options are selected if none was set before."
+        },
+        "onclick": {
+          "description": "JavaScript evaluated for the onclick event"
+        },
+        "sortByOptionLabel": {
+          "description": "If true, List will be sorted by label."
+        },
+        "data": {
+          "description": "Additional data-* attributes. They will each be added with a \"data-\" prefix."
+        },
+        "name": {
+          "description": "Name of input tag"
+        },
+        "dir": {
+          "description": "Text direction for this HTML element. Allowed strings: \"ltr\" (left to right), \"rtl\" (right to left)"
+        },
+        "prependOptionValue": {
+          "description": "If specified, will provide an option at first position with the specified value."
+        },
+        "lang": {
+          "description": "Language for this element. Use short names specified in RFC 1766"
+        },
+        "errorClass": {
+          "description": "CSS class to set if there are errors for this view helper"
+        },
+        "multiple": {
+          "description": "If set multiple options may be selected."
+        },
+        "value": {
+          "description": "Value of input tag"
+        },
+        "style": {
+          "description": "Individual CSS styles for this element"
+        },
+        "prependOptionLabel": {
+          "description": "If specified, will provide an option at first position with the specified label."
+        },
+        "property": {
+          "description": "Name of Object Property. If used in conjunction with <f:form object=\"...\">, \"name\" and \"value\" properties will be ignored."
+        },
+        "class": {
+          "description": "CSS class(es) for this element"
+        },
+        "title": {
+          "description": "Tooltip text of element"
+        },
+        "optionLabelField": {
+          "description": "If specified, will call the appropriate getter on each object to determine the label."
+        },
+        "optionsAfterContent": {
+          "description": "If true, places auto-generated option tags after those rendered in the tag content. If false, automatic options come first."
+        },
+        "id": {
+          "description": "Unique (in this file) identifier for this HTML element."
+        },
+        "accesskey": {
+          "description": "Keyboard shortcut to access this element"
+        },
+        "disabled": {
+          "description": "Specifies that the input element should be disabled when the page loads"
+        },
+        "tabindex": {
+          "description": "Specifies the tab order of this element"
+        },
+        "optionValueField": {
+          "description": "If specified, will call the appropriate getter on each object to determine the value."
+        },
+        "additionalAttributes": {
+          "description": "Additional tag attributes. They will be added directly to the resulting HTML tag."
+        },
+        "options": {
+          "description": "Associative array with internal IDs as key, and the values are displayed in the select box. Can be combined with or replaced by child f:form.select.* nodes."
+        }
+      },
+      "description": "This view helper generates a <select> dropdown list for the use with a form."
+    },
+    "format.htmlspecialchars": {
+      "properties": {
+        "doubleEncode": {
+          "description": "If FALSE html entities will not be encoded"
+        },
+        "value": {
+          "description": "Value to format"
+        },
+        "encoding": {
+          "description": "Encoding"
+        },
+        "keepQuotes": {
+          "description": "If TRUE quotes will not be replaced (ENT_NOQUOTES)"
+        }
+      },
+      "description": "Applies htmlspecialchars() escaping to a value"
+    },
+    "format.crop": {
+      "mandatoryProperties": [
+        "maxCharacters"
+      ],
+      "properties": {
+        "maxCharacters": {
+          "description": "Place where to truncate the string"
+        },
+        "respectHtml": {
+          "description": "If TRUE the cropped string will respect HTML tags and entities. Technically that means, that cropHTML() is called rather than crop()"
+        },
+        "respectWordBoundaries": {
+          "description": "If TRUE and division is in the middle of a word, the remains of that word is removed."
+        },
+        "append": {
+          "description": "What to append, if truncation happened"
+        }
+      },
+      "description": "Use this view helper to crop the text between its opening and closing tags."
+    },
+    "format.case": {
+      "properties": {
+        "mode": {
+          "description": "The case to apply, must be one of this' CASE_* constants. Defaults to uppercase application."
+        },
+        "value": {
+          "description": "The input value. If not given, the evaluated child nodes will be used."
+        }
+      },
+      "description": "Modifies the case of an input string to upper- or lowercase or capitalization."
+    },
+    "format.currency": {
+      "properties": {
+        "decimals": {
+          "description": "Set decimals places."
+        },
+        "currencySign": {
+          "description": "The currency sign, eg $ or €."
+        },
+        "thousandsSeparator": {
+          "description": "The thousands separator."
+        },
+        "separateCurrency": {
+          "description": "Separate the currency sign from the number by a single space, defaults to true due to backwards compatibility"
+        },
+        "decimalSeparator": {
+          "description": "The separator for the decimal point."
+        },
+        "prependCurrency": {
+          "description": "Select if the currency sign should be prepended"
+        }
+      },
+      "description": "Formats a given float to a currency representation."
+    },
+    "link.email": {
+      "mandatoryProperties": [
+        "email"
+      ],
+      "properties": {
+        "rev": {
+          "description": "Specifies the relationship between the linked document and the current document"
+        },
+        "onclick": {
+          "description": "JavaScript evaluated for the onclick event"
+        },
+        "data": {
+          "description": "Additional data-* attributes. They will each be added with a \"data-\" prefix."
+        },
+        "name": {
+          "description": "Specifies the name of an anchor"
+        },
+        "dir": {
+          "description": "Text direction for this HTML element. Allowed strings: \"ltr\" (left to right), \"rtl\" (right to left)"
+        },
+        "lang": {
+          "description": "Language for this element. Use short names specified in RFC 1766"
+        },
+        "target": {
+          "description": "Specifies where to open the linked document"
+        },
+        "style": {
+          "description": "Individual CSS styles for this element"
+        },
+        "class": {
+          "description": "CSS class(es) for this element"
+        },
+        "title": {
+          "description": "Tooltip text of element"
+        },
+        "rel": {
+          "description": "Specifies the relationship between the current document and the linked document"
+        },
+        "id": {
+          "description": "Unique (in this file) identifier for this HTML element."
+        },
+        "accesskey": {
+          "description": "Keyboard shortcut to access this element"
+        },
+        "email": {
+          "description": "The email address to be turned into a link"
+        },
+        "tabindex": {
+          "description": "Specifies the tab order of this element"
+        },
+        "additionalAttributes": {
+          "description": "Additional tag attributes. They will be added directly to the resulting HTML tag."
+        }
+      },
+      "description": "Email link view helper."
+    },
+    "be.pageInfo": {
+      "description": "View helper which return page info icon as known from TYPO3 backend modules"
+    },
+    "for": {
+      "mandatoryProperties": [
+        "each",
+        "as"
+      ],
+      "properties": {
+        "each": {
+          "description": "The array or \\SplObjectStorage to iterated over"
+        },
+        "reverse": {
+          "description": "If TRUE, iterates in reverse"
+        },
+        "as": {
+          "description": "The name of the iteration variable"
+        },
+        "iteration": {
+          "description": "The name of the variable to store iteration information (index, cycle, isFirst, isLast, isEven, isOdd)"
+        },
+        "key": {
+          "description": "Variable to assign array key to"
+        }
+      },
+      "description": "Loop view helper which can be used to iterate over arrays."
+    },
+    "link.action": {
+      "properties": {
+        "noCache": {
+          "description": "set this to disable caching for the target page. You should not need this."
+        },
+        "pageUid": {
+          "description": "target page. See TypoLink destination"
+        },
+        "rev": {
+          "description": "Specifies the relationship between the linked document and the current document"
+        },
+        "section": {
+          "description": "the anchor to be added to the URI"
+        },
+        "pageType": {
+          "description": "type of the target page. See typolink.parameter"
+        },
+        "onclick": {
+          "description": "JavaScript evaluated for the onclick event"
+        },
+        "extensionName": {
+          "description": "Target Extension Name (without \"tx_\" prefix and no underscores). If NULL the current extension name is used"
+        },
+        "data": {
+          "description": "Additional data-* attributes. They will each be added with a \"data-\" prefix."
+        },
+        "linkAccessRestrictedPages": {
+          "description": "If set, links pointing to access restricted pages will still link to the page even though the page cannot be accessed."
+        },
+        "name": {
+          "description": "Specifies the name of an anchor"
+        },
+        "dir": {
+          "description": "Text direction for this HTML element. Allowed strings: \"ltr\" (left to right), \"rtl\" (right to left)"
+        },
+        "additionalParams": {
+          "description": "additional query parameters that won't be prefixed like $arguments (overrule $arguments)"
+        },
+        "lang": {
+          "description": "Language for this element. Use short names specified in RFC 1766"
+        },
+        "noCacheHash": {
+          "description": "set this to suppress the cHash query parameter created by TypoLink. You should not need this."
+        },
+        "argumentsToBeExcludedFromQueryString": {
+          "description": "arguments to be removed from the URI. Only active if $addQueryString = TRUE"
+        },
+        "target": {
+          "description": "Specifies where to open the linked document"
+        },
+        "style": {
+          "description": "Individual CSS styles for this element"
+        },
+        "arguments": {
+          "description": "Arguments"
+        },
+        "action": {
+          "description": "Target action"
+        },
+        "absolute": {
+          "description": "If set, the URI of the rendered link is absolute"
+        },
+        "format": {
+          "description": "The requested format, e.g. \".html"
+        },
+        "class": {
+          "description": "CSS class(es) for this element"
+        },
+        "title": {
+          "description": "Tooltip text of element"
+        },
+        "addQueryString": {
+          "description": "If set, the current query parameters will be kept in the URI"
+        },
+        "rel": {
+          "description": "Specifies the relationship between the current document and the linked document"
+        },
+        "addQueryStringMethod": {
+          "description": "Set which parameters will be kept. Only active if $addQueryString = TRUE"
+        },
+        "id": {
+          "description": "Unique (in this file) identifier for this HTML element."
+        },
+        "accesskey": {
+          "description": "Keyboard shortcut to access this element"
+        },
+        "controller": {
+          "description": "Target controller. If NULL current controllerName is used"
+        },
+        "tabindex": {
+          "description": "Specifies the tab order of this element"
+        },
+        "pluginName": {
+          "description": "Target plugin. If empty, the current plugin name is used"
+        },
+        "additionalAttributes": {
+          "description": "Additional tag attributes. They will be added directly to the resulting HTML tag."
+        }
+      },
+      "description": "A view helper for creating links to extbase actions."
+    },
+    "layout": {
+      "properties": {
+        "name": {
+          "description": "Name of layout to use. If none given, \"Default\" is used."
+        }
+      },
+      "description": "With this tag, you can select a layout to be used for the current template."
+    },
+    "groupedFor": {
+      "mandatoryProperties": [
+        "each",
+        "as",
+        "groupBy"
+      ],
+      "properties": {
+        "groupKey": {
+          "description": "The name of the variable to store the current group"
+        },
+        "each": {
+          "description": "The array or \\SplObjectStorage to iterated over"
+        },
+        "as": {
+          "description": "The name of the iteration variable"
+        },
+        "groupBy": {
+          "description": "Group by this property"
+        }
+      },
+      "description": "Grouped loop view helper."
+    },
+    "form.upload": {
+      "properties": {
+        "onclick": {
+          "description": "JavaScript evaluated for the onclick event"
+        },
+        "data": {
+          "description": "Additional data-* attributes. They will each be added with a \"data-\" prefix."
+        },
+        "name": {
+          "description": "Name of input tag"
+        },
+        "dir": {
+          "description": "Text direction for this HTML element. Allowed strings: \"ltr\" (left to right), \"rtl\" (right to left)"
+        },
+        "lang": {
+          "description": "Language for this element. Use short names specified in RFC 1766"
+        },
+        "errorClass": {
+          "description": "CSS class to set if there are errors for this view helper"
+        },
+        "multiple": {
+          "description": "Specifies that the file input element should allow multiple selection of files"
+        },
+        "value": {
+          "description": "Value of input tag"
+        },
+        "style": {
+          "description": "Individual CSS styles for this element"
+        },
+        "property": {
+          "description": "Name of Object Property. If used in conjunction with <f:form object=\"...\">, \"name\" and \"value\" properties will be ignored."
+        },
+        "class": {
+          "description": "CSS class(es) for this element"
+        },
+        "title": {
+          "description": "Tooltip text of element"
+        },
+        "id": {
+          "description": "Unique (in this file) identifier for this HTML element."
+        },
+        "accesskey": {
+          "description": "Keyboard shortcut to access this element"
+        },
+        "disabled": {
+          "description": "Specifies that the input element should be disabled when the page loads"
+        },
+        "tabindex": {
+          "description": "Specifies the tab order of this element"
+        },
+        "additionalAttributes": {
+          "description": "Additional tag attributes. They will be added directly to the resulting HTML tag."
+        }
+      },
+      "description": "A view helper which generates an <input type=\"file\"> HTML element."
+    },
+    "cache.warmup": {
+      "properties": {
+        "variables": {
+          "description": "Array of variables to assign ONLY when compiling. See main class documentation."
+        }
+      },
+      "description": "ViewHelper to insert variables which only apply during"
+    },
+    "be.menus.actionMenuItem": {
+      "mandatoryProperties": [
+        "label",
+        "controller",
+        "action"
+      ],
+      "properties": {
+        "data": {
+          "description": "Additional data-* attributes. They will each be added with a \"data-\" prefix."
+        },
+        "label": {
+          "description": "label of the option tag"
+        },
+        "arguments": {
+          "description": "additional controller arguments to be passed to the action when this ActionMenuItem is selected"
+        },
+        "action": {
+          "description": "the action to be associated with this ActionMenuItem"
+        },
+        "controller": {
+          "description": "controller to be associated with this ActionMenuItem"
+        },
+        "additionalAttributes": {
+          "description": "Additional tag attributes. They will be added directly to the resulting HTML tag."
+        }
+      },
+      "description": "View helper which returns an option tag."
+    },
+    "format.nl2br": {
+      "properties": {
+        "value": {
+          "description": "string to format"
+        }
+      },
+      "description": "Wrapper for PHPs nl2br function."
+    },
+    "form.checkbox": {
+      "mandatoryProperties": [
+        "value"
+      ],
+      "properties": {
+        "checked": {
+          "description": "Specifies that the input element should be preselected"
+        },
+        "onclick": {
+          "description": "JavaScript evaluated for the onclick event"
+        },
+        "data": {
+          "description": "Additional data-* attributes. They will each be added with a \"data-\" prefix."
+        },
+        "name": {
+          "description": "Name of input tag"
+        },
+        "dir": {
+          "description": "Text direction for this HTML element. Allowed strings: \"ltr\" (left to right), \"rtl\" (right to left)"
+        },
+        "lang": {
+          "description": "Language for this element. Use short names specified in RFC 1766"
+        },
+        "errorClass": {
+          "description": "CSS class to set if there are errors for this view helper"
+        },
+        "multiple": {
+          "description": "Specifies whether this checkbox belongs to a multivalue (is part of a checkbox group)"
+        },
+        "value": {
+          "description": "Value of input tag. Required for checkboxes"
+        },
+        "style": {
+          "description": "Individual CSS styles for this element"
+        },
+        "property": {
+          "description": "Name of Object Property. If used in conjunction with <f:form object=\"...\">, \"name\" and \"value\" properties will be ignored."
+        },
+        "class": {
+          "description": "CSS class(es) for this element"
+        },
+        "title": {
+          "description": "Tooltip text of element"
+        },
+        "id": {
+          "description": "Unique (in this file) identifier for this HTML element."
+        },
+        "accesskey": {
+          "description": "Keyboard shortcut to access this element"
+        },
+        "disabled": {
+          "description": "Specifies that the input element should be disabled when the page loads"
+        },
+        "tabindex": {
+          "description": "Specifies the tab order of this element"
+        },
+        "additionalAttributes": {
+          "description": "Additional tag attributes. They will be added directly to the resulting HTML tag."
+        }
+      },
+      "description": "View Helper which creates a simple checkbox (<input type=\"checkbox\">)."
+    },
+    "uri.external": {
+      "mandatoryProperties": [
+        "uri"
+      ],
+      "properties": {
+        "defaultScheme": {
+          "description": "scheme the href attribute will be prefixed with if specified $uri does not contain a scheme already"
+        },
+        "uri": {
+          "description": "target URI"
+        }
+      },
+      "description": "A view helper for creating URIs to external targets."
+    },
+    "translate": {
+      "properties": {
+        "default": {
+          "description": "If the given locallang key could not be found, this value is used. If this argument is not set, child nodes will be used to render the default"
+        },
+        "extensionName": {
+          "description": "UpperCamelCased extension key (for example BlogExample)"
+        },
+        "htmlEscape": {
+          "description": "TRUE if the result should be htmlescaped. This won't have an effect for the default value"
+        },
+        "arguments": {
+          "description": "Arguments to be replaced in the resulting string"
+        },
+        "id": {
+          "description": "Translation Key compatible to TYPO3 Flow"
+        },
+        "key": {
+          "description": "Translation Key"
+        }
+      },
+      "description": "Translate a key from locallang. The files are loaded from the folder"
+    },
+    "format.urlencode": {
+      "properties": {
+        "value": {
+          "description": "string to format"
+        }
+      },
+      "description": "Encodes the given string according to http:\/\/www.faqs.org\/rfcs\/rfc3986.html (applying PHPs rawurlencode() function)"
+    },
+    "count": {
+      "properties": {
+        "subject": {
+          "description": "Countable subject, array or \\Countable"
+        }
+      },
+      "description": "This ViewHelper counts elements of the specified array or countable object."
+    },
+    "be.security.ifAuthenticated": {
+      "properties": {
+        "else": {
+          "description": "Value to be returned if the condition if not met."
+        },
+        "condition": {
+          "description": "Condition expression conforming to Fluid boolean rules"
+        },
+        "then": {
+          "description": "Value to be returned if the condition if met."
+        }
+      },
+      "description": "This view helper implements an ifAuthenticated\/else condition for BE users\/groups."
+    },
+    "be.security.ifHasRole": {
+      "properties": {
+        "role": {
+          "description": "The usergroup (either the usergroup uid or its title)."
+        }
+      },
+      "description": "This view helper implements an ifHasRole\/else condition for BE users\/groups."
+    },
+    "format.printf": {
+      "properties": {
+        "value": {
+          "description": "String to format"
+        },
+        "arguments": {
+          "description": "The arguments for vsprintf"
+        }
+      },
+      "description": "A view helper for formatting values with printf. Either supply an array for"
+    },
+    "alias": {
+      "mandatoryProperties": [
+        "map"
+      ],
+      "properties": {
+        "map": {
+          "description": "Array that specifies which variables should be mapped to which alias"
+        }
+      },
+      "description": "Declares new variables which are aliases of other variables."
+    },
+    "uri.resource": {
+      "mandatoryProperties": [
+        "path"
+      ],
+      "properties": {
+        "path": {
+          "description": "The path and filename of the resource (relative to Public resource directory of the extension)."
+        },
+        "extensionName": {
+          "description": "Target extension name. If not set, the current extension name will be used"
+        },
+        "absolute": {
+          "description": "If set, an absolute URI is rendered"
+        }
+      },
+      "description": "A view helper for creating URIs to resources."
+    },
+    "case": {
+      "mandatoryProperties": [
+        "value"
+      ],
+      "properties": {
+        "value": {
+          "description": "Value to match in this case"
+        }
+      },
+      "description": "Case view helper that is only usable within the SwitchViewHelper."
+    },
+    "format.htmlentitiesDecode": {
+      "properties": {
+        "value": {
+          "description": "string to format"
+        },
+        "encoding": {
+          "description": ""
+        },
+        "keepQuotes": {
+          "description": "If TRUE, single and double quotes won't be replaced (sets ENT_NOQUOTES flag)."
+        }
+      },
+      "description": "Applies html_entity_decode() to a value"
+    },
+    "defaultCase": {
+      "description": "A view helper which specifies the \"default\" case when used within the SwitchViewHelper."
+    },
+    "debug.render": {
+      "properties": {
+        "optional": {
+          "description": "If TRUE, considers the *section* optional. Partial never is."
+        },
+        "partial": {
+          "description": "Partial to render, with or without section"
+        },
+        "default": {
+          "description": "Value (usually string) to be displayed if the section or partial does not exist"
+        },
+        "section": {
+          "description": "Section to render - combine with partial to render section in partial"
+        },
+        "contentAs": {
+          "description": "If used, renders the child content and adds it as a template variable with this name for use in the partial\/section"
+        },
+        "arguments": {
+          "description": "Array of variables to be transferred. Use {_all} for all variables"
+        }
+      },
+      "description": "Debuggable version of f:render - performs the same"
+    },
+    "format.raw": {
+      "properties": {
+        "value": {
+          "description": "The value to output"
+        }
+      },
+      "description": "Outputs an argument\/value without any escaping. Is normally used to output"
+    },
+    "uri.page": {
+      "properties": {
+        "noCache": {
+          "description": "set this to disable caching for the target page. You should not need this."
+        },
+        "pageUid": {
+          "description": "target PID"
+        },
+        "section": {
+          "description": "the anchor to be added to the URI"
+        },
+        "pageType": {
+          "description": "type of the target page. See typolink.parameter"
+        },
+        "linkAccessRestrictedPages": {
+          "description": "If set, links pointing to access restricted pages will still link to the page even though the page cannot be accessed."
+        },
+        "additionalParams": {
+          "description": "query parameters to be attached to the resulting URI"
+        },
+        "noCacheHash": {
+          "description": "set this to suppress the cHash query parameter created by TypoLink. You should not need this."
+        },
+        "argumentsToBeExcludedFromQueryString": {
+          "description": "arguments to be removed from the URI. Only active if $addQueryString = TRUE"
+        },
+        "absolute": {
+          "description": "If set, the URI of the rendered link is absolute"
+        },
+        "addQueryString": {
+          "description": "If set, the current query parameters will be kept in the URI"
+        },
+        "addQueryStringMethod": {
+          "description": "Set which parameters will be kept. Only active if $addQueryString = TRUE"
+        }
+      },
+      "description": "A view helper for creating URIs to TYPO3 pages."
+    },
+    "form.radio": {
+      "mandatoryProperties": [
+        "value"
+      ],
+      "properties": {
+        "checked": {
+          "description": "Specifies that the input element should be preselected"
+        },
+        "onclick": {
+          "description": "JavaScript evaluated for the onclick event"
+        },
+        "data": {
+          "description": "Additional data-* attributes. They will each be added with a \"data-\" prefix."
+        },
+        "name": {
+          "description": "Name of input tag"
+        },
+        "dir": {
+          "description": "Text direction for this HTML element. Allowed strings: \"ltr\" (left to right), \"rtl\" (right to left)"
+        },
+        "lang": {
+          "description": "Language for this element. Use short names specified in RFC 1766"
+        },
+        "errorClass": {
+          "description": "CSS class to set if there are errors for this view helper"
+        },
+        "value": {
+          "description": "Value of input tag. Required for radio buttons"
+        },
+        "style": {
+          "description": "Individual CSS styles for this element"
+        },
+        "property": {
+          "description": "Name of Object Property. If used in conjunction with <f:form object=\"...\">, \"name\" and \"value\" properties will be ignored."
+        },
+        "class": {
+          "description": "CSS class(es) for this element"
+        },
+        "title": {
+          "description": "Tooltip text of element"
+        },
+        "id": {
+          "description": "Unique (in this file) identifier for this HTML element."
+        },
+        "accesskey": {
+          "description": "Keyboard shortcut to access this element"
+        },
+        "disabled": {
+          "description": "Specifies that the input element should be disabled when the page loads"
+        },
+        "tabindex": {
+          "description": "Specifies the tab order of this element"
+        },
+        "additionalAttributes": {
+          "description": "Additional tag attributes. They will be added directly to the resulting HTML tag."
+        }
+      },
+      "description": "View Helper which creates a simple radio button (<input type=\"radio\">)."
+    },
+    "base": {
+      "description": "View helper which creates a <base href=\"...\"><\/base> tag. The Base URI is taken from the"
+    },
+    "link.typolink": {
+      "mandatoryProperties": [
+        "parameter"
+      ],
+      "properties": {
+        "useCacheHash": {
+          "description": ""
+        },
+        "parameter": {
+          "description": "stdWrap.typolink style parameter string"
+        },
+        "additionalParams": {
+          "description": ""
+        },
+        "target": {
+          "description": ""
+        },
+        "class": {
+          "description": ""
+        },
+        "title": {
+          "description": ""
+        },
+        "additionalAttributes": {
+          "description": ""
+        }
+      },
+      "description": "A ViewHelper to create links from fields supported by the link wizard"
+    },
+    "be.menus.actionMenuItemGroup": {
+      "properties": {
+        "data": {
+          "description": "Additional data-* attributes. They will each be added with a \"data-\" prefix."
+        },
+        "label": {
+          "description": "label"
+        },
+        "defaultController": {
+          "description": "defaultController"
+        },
+        "additionalAttributes": {
+          "description": "Additional tag attributes. They will be added directly to the resulting HTML tag."
+        }
+      },
+      "description": "View helper which groups options of an option tag."
+    },
+    "widget.autocomplete": {
+      "mandatoryProperties": [
+        "objects",
+        "for",
+        "searchProperty"
+      ],
+      "properties": {
+        "for": {
+          "description": ""
+        },
+        "customWidgetId": {
+          "description": "extend the widget identifier with a custom widget id"
+        },
+        "objects": {
+          "description": ""
+        },
+        "searchProperty": {
+          "description": ""
+        }
+      },
+      "description": "Simple paginate widget"
+    },
+    "be.infobox": {
+      "properties": {
+        "disableIcon": {
+          "description": "If set to TRUE, the icon is not rendered."
+        },
+        "iconName": {
+          "description": "The icon name from font awesome, NULL sets default icon"
+        },
+        "message": {
+          "description": "The message of the info box, if NULL tag content is used"
+        },
+        "state": {
+          "description": "The state of the box, InfoboxViewHelper::STATE_*"
+        },
+        "title": {
+          "description": "The title of the info box"
+        }
+      },
+      "description": "View helper for rendering a styled content infobox markup."
+    },
+    "debug": {
+      "properties": {
+        "blacklistedClassNames": {
+          "description": "An array of class names (RegEx) to be filtered. Default is an array of some common class names."
+        },
+        "ansiColors": {
+          "description": "If TRUE, ANSI color codes is added to the plaintext output, if FALSE (default) the plaintext debug output not colored."
+        },
+        "blacklistedPropertyNames": {
+          "description": "An array of property names and\/or array keys (RegEx) to be filtered. Default is an array of some common property names."
+        },
+        "plainText": {
+          "description": "If TRUE, the dump is in plain text, if FALSE the debug output is in HTML format."
+        },
+        "title": {
+          "description": "optional custom title for the debug output"
+        },
+        "inline": {
+          "description": "if TRUE, the dump is rendered at the position of the <f:debug> tag. If FALSE (default), the dump is displayed at the top of the page."
+        },
+        "maxDepth": {
+          "description": "Sets the max recursion depth of the dump (defaults to 8). De- or increase the number according to your needs and memory limit."
+        }
+      },
+      "description": "This ViewHelper generates a HTML dump of the tagged variable."
+    },
+    "form.validationResults": {
+      "properties": {
+        "for": {
+          "description": "The name of the error name (e.g. argument name or property name). This can also be a property path (like blog.title), and will then only display the validation errors of that property."
+        },
+        "as": {
+          "description": "The name of the variable to store the current error"
+        }
+      },
+      "description": "Validation results view helper"
+    },
+    "form.hidden": {
+      "properties": {
+        "onclick": {
+          "description": "JavaScript evaluated for the onclick event"
+        },
+        "data": {
+          "description": "Additional data-* attributes. They will each be added with a \"data-\" prefix."
+        },
+        "name": {
+          "description": "Name of input tag"
+        },
+        "dir": {
+          "description": "Text direction for this HTML element. Allowed strings: \"ltr\" (left to right), \"rtl\" (right to left)"
+        },
+        "lang": {
+          "description": "Language for this element. Use short names specified in RFC 1766"
+        },
+        "value": {
+          "description": "Value of input tag"
+        },
+        "style": {
+          "description": "Individual CSS styles for this element"
+        },
+        "property": {
+          "description": "Name of Object Property. If used in conjunction with <f:form object=\"...\">, \"name\" and \"value\" properties will be ignored."
+        },
+        "class": {
+          "description": "CSS class(es) for this element"
+        },
+        "title": {
+          "description": "Tooltip text of element"
+        },
+        "id": {
+          "description": "Unique (in this file) identifier for this HTML element."
+        },
+        "accesskey": {
+          "description": "Keyboard shortcut to access this element"
+        },
+        "tabindex": {
+          "description": "Specifies the tab order of this element"
+        },
+        "additionalAttributes": {
+          "description": "Additional tag attributes. They will be added directly to the resulting HTML tag."
+        }
+      },
+      "description": "Renders an <input type=\"hidden\" ...> tag."
+    },
+    "switch": {
+      "mandatoryProperties": [
+        "expression"
+      ],
+      "properties": {
+        "expression": {
+          "description": "Expression to switch"
+        }
+      },
+      "description": "Switch view helper which can be used to render content depending on a value or expression."
+    },
+    "form.select.optgroup": {
+      "properties": {
+        "onclick": {
+          "description": "JavaScript evaluated for the onclick event"
+        },
+        "data": {
+          "description": "Additional data-* attributes. They will each be added with a \"data-\" prefix."
+        },
+        "dir": {
+          "description": "Text direction for this HTML element. Allowed strings: \"ltr\" (left to right), \"rtl\" (right to left)"
+        },
+        "lang": {
+          "description": "Language for this element. Use short names specified in RFC 1766"
+        },
+        "style": {
+          "description": "Individual CSS styles for this element"
+        },
+        "label": {
+          "description": "Human-readable label property for the generated optgroup tag"
+        },
+        "class": {
+          "description": "CSS class(es) for this element"
+        },
+        "title": {
+          "description": "Tooltip text of element"
+        },
+        "id": {
+          "description": "Unique (in this file) identifier for this HTML element."
+        },
+        "accesskey": {
+          "description": "Keyboard shortcut to access this element"
+        },
+        "disabled": {
+          "description": "If true, option group is rendered as disabled"
+        },
+        "tabindex": {
+          "description": "Specifies the tab order of this element"
+        },
+        "additionalAttributes": {
+          "description": "Additional tag attributes. They will be added directly to the resulting HTML tag."
+        }
+      },
+      "description": "Adds custom `<optgroup>` tags inside an `<f:form.select>`,"
+    },
+    "format.bytes": {
+      "properties": {
+        "decimals": {
+          "description": "The number of digits after the decimal point"
+        },
+        "units": {
+          "description": "comma separated list of available units, default is LocalizationUtility::translate('viewhelper.format.bytes.units', 'fluid')"
+        },
+        "thousandsSeparator": {
+          "description": "The character for grouping the thousand digits"
+        },
+        "value": {
+          "description": "The incoming data to convert, or NULL if VH children should be used"
+        },
+        "decimalSeparator": {
+          "description": "The decimal point character"
+        }
+      },
+      "description": "Formats an integer with a byte count into human-readable form."
+    },
+    "renderChildren": {
+      "properties": {
+        "arguments": {
+          "description": "Arguments to assign as template variables"
+        }
+      },
+      "description": "Render the inner parts of a Widget."
+    },
+    "be.container": {
+      "properties": {
+        "includeRequireJsModules": {
+          "description": "List of RequireJS modules to be loaded"
+        },
+        "addJsInlineLabels": {
+          "description": "Custom labels to add to JavaScript inline labels"
+        },
+        "enableClickMenu": {
+          "description": "If TRUE, loads clickmenu.js required by BE context menus. Defaults to TRUE. This option will be removed in TYPO3 v9"
+        },
+        "loadExtJs": {
+          "description": "Specifies whether to load ExtJS library. Defaults to FALSE. This option will be removed in TYPO3 v9"
+        },
+        "loadJQuery": {
+          "description": "Whether to load jQuery library. Defaults to FALSE. This option will be removed in TYPO3 v9"
+        },
+        "loadExtJsTheme": {
+          "description": "Whether to load ExtJS \"grey\" theme. Defaults to FALSE. This option will be removed in TYPO3 v9"
+        },
+        "includeJsFiles": {
+          "description": "List of custom JavaScript file to be loaded"
+        },
+        "pageTitle": {
+          "description": "Title tag of the module. Not required by default, as BE modules are shown in a frame"
+        },
+        "enableExtJsDebug": {
+          "description": "If TRUE, debug version of ExtJS is loaded. Use this for development only. This option will be removed in TYPO3 v9"
+        },
+        "includeCssFiles": {
+          "description": "List of custom CSS file to be loaded"
+        },
+        "jQueryNamespace": {
+          "description": "Store the jQuery object in a specific namespace. This option will be removed in TYPO3 v9"
+        }
+      },
+      "description": "View helper which allows you to create extbase based modules in the style of TYPO3 default modules."
+    },
+    "be.widget.paginate": {
+      "mandatoryProperties": [
+        "objects",
+        "as"
+      ],
+      "properties": {
+        "customWidgetId": {
+          "description": "extend the widget identifier with a custom widget id"
+        },
+        "as": {
+          "description": ""
+        },
+        "objects": {
+          "description": ""
+        },
+        "configuration": {
+          "description": ""
+        }
+      },
+      "description": "This ViewHelper renders a Pagination of objects for the TYPO3 Backend."
+    },
+    "render": {
+      "properties": {
+        "optional": {
+          "description": "If TRUE, considers the *section* optional. Partial never is."
+        },
+        "partial": {
+          "description": "Partial to render, with or without section"
+        },
+        "default": {
+          "description": "Value (usually string) to be displayed if the section or partial does not exist"
+        },
+        "delegate": {
+          "description": "Optional PHP class name of a permanent, included-in-app ParsedTemplateInterface implementation to override partial\/section"
+        },
+        "section": {
+          "description": "Section to render - combine with partial to render section in partial"
+        },
+        "contentAs": {
+          "description": "If used, renders the child content and adds it as a template variable with this name for use in the partial\/section"
+        },
+        "arguments": {
+          "description": "Array of variables to be transferred. Use {_all} for all variables"
+        }
+      },
+      "description": "A ViewHelper to render a section, a partial, a specified section in a partial"
+    },
+    "format.cdata": {
+      "properties": {
+        "value": {
+          "description": "The value to output"
+        }
+      },
+      "description": "Outputs an argument\/value without any escaping and wraps it with CDATA tags."
+    },
+    "uri.action": {
+      "properties": {
+        "noCache": {
+          "description": "Set this to disable caching for the target page. You should not need this."
+        },
+        "pageUid": {
+          "description": "Target page. See TypoLink destination"
+        },
+        "section": {
+          "description": "The anchor to be added to the URI"
+        },
+        "pageType": {
+          "description": "Type of the target page. See typolink.parameter"
+        },
+        "extensionName": {
+          "description": "Target Extension Name (without \"tx_\" prefix and no underscores). If NULL the current extension name is used"
+        },
+        "linkAccessRestrictedPages": {
+          "description": "If set, links pointing to access restricted pages will still link to the page even though the page cannot be accessed."
+        },
+        "additionalParams": {
+          "description": "additional query parameters that won't be prefixed like $arguments (overrule $arguments)"
+        },
+        "noCacheHash": {
+          "description": "Set this to suppress the cHash query parameter created by TypoLink. You should not need this."
+        },
+        "argumentsToBeExcludedFromQueryString": {
+          "description": "arguments to be removed from the URI. Only active if $addQueryString = TRUE"
+        },
+        "arguments": {
+          "description": "Arguments"
+        },
+        "action": {
+          "description": "Target action"
+        },
+        "absolute": {
+          "description": "If set, an absolute URI is rendered"
+        },
+        "format": {
+          "description": "The requested format, e.g. \".html"
+        },
+        "addQueryString": {
+          "description": "If set, the current query parameters will be kept in the URI"
+        },
+        "addQueryStringMethod": {
+          "description": "Set which parameters will be kept. Only active if $addQueryString = TRUE"
+        },
+        "controller": {
+          "description": "Target controller. If NULL current controllerName is used"
+        },
+        "pluginName": {
+          "description": "Target plugin. If empty, the current plugin name is used"
+        }
+      },
+      "description": "A view helper for creating URIs to extbase actions."
+    },
+    "else": {
+      "properties": {
+        "if": {
+          "description": "Condition expression conforming to Fluid boolean rules"
+        }
+      },
+      "description": "Else-Branch of a condition. Only has an effect inside of \"If\". See the If-ViewHelper for documentation."
+    },
+    "uri.image": {
+      "properties": {
+        "maxWidth": {
+          "description": "maximum width of the image"
+        },
+        "treatIdAsReference": {
+          "description": "given src argument is a sys_file_reference record"
+        },
+        "src": {
+          "description": "src"
+        },
+        "width": {
+          "description": "width of the image. This can be a numeric value representing the fixed width of the image in pixels. But you can also perform simple calculations by adding \"m\" or \"c\" to the value. See imgResource.width for possible options."
+        },
+        "height": {
+          "description": "height of the image. This can be a numeric value representing the fixed height of the image in pixels. But you can also perform simple calculations by adding \"m\" or \"c\" to the value. See imgResource.width for possible options."
+        },
+        "maxHeight": {
+          "description": "maximum height of the image"
+        },
+        "crop": {
+          "description": "overrule cropping of image (setting to FALSE disables the cropping set in FileReference)"
+        },
+        "minWidth": {
+          "description": "minimum width of the image"
+        },
+        "cropVariant": {
+          "description": "select a cropping variant, in case multiple croppings have been specified or stored in FileReference"
+        },
+        "absolute": {
+          "description": "Force absolute URL"
+        },
+        "minHeight": {
+          "description": "minimum height of the image"
+        },
+        "image": {
+          "description": "image"
+        }
+      },
+      "description": "Resizes a given image (if required) and returns its relative path."
+    },
+    "uri.email": {
+      "mandatoryProperties": [
+        "email"
+      ],
+      "properties": {
+        "email": {
+          "description": "The email address to be turned into a URI"
+        }
+      },
+      "description": "Email URI view helper."
+    },
+    "format.padding": {
+      "mandatoryProperties": [
+        "padLength"
+      ],
+      "properties": {
+        "padString": {
+          "description": "The padding string"
+        },
+        "padType": {
+          "description": "Append the padding at this site (Possible values: right,left,both. Default: right)"
+        },
+        "value": {
+          "description": "string to format"
+        },
+        "padLength": {
+          "description": "Length of the resulting string. If the value of pad_length is negative or less than the length of the input string, no padding takes place."
+        }
+      },
+      "description": "Formats a string using PHPs str_pad function."
+    },
+    "format.stripTags": {
+      "properties": {
+        "allowedTags": {
+          "description": "Optional string of allowed tags as required by PHPs strip_tags() f\nunction"
+        },
+        "value": {
+          "description": "string to format"
+        }
+      },
+      "description": "Removes tags from the given string (applying PHPs strip_tags() function)"
+    },
+    "be.menus.actionMenu": {
+      "properties": {
+        "data": {
+          "description": "Additional data-* attributes. They will each be added with a \"data-\" prefix."
+        },
+        "defaultController": {
+          "description": "defaultController"
+        },
+        "additionalAttributes": {
+          "description": "Additional tag attributes. They will be added directly to the resulting HTML tag."
+        }
+      },
+      "description": "View helper which returns a select box, that can be used to switch between"
+    },
+    "cache.static": {
+      "description": "ViewHelper to force compiling to a static string"
+    },
+    "image": {
+      "properties": {
+        "maxWidth": {
+          "description": "minimum width of the image"
+        },
+        "treatIdAsReference": {
+          "description": "given src argument is a sys_file_reference record"
+        },
+        "src": {
+          "description": "a path to a file, a combined FAL identifier or an uid (int). If $treatIdAsReference is set, the integer is considered the uid of the sys_file_reference record. If you already got a FAL object, consider using the $image parameter instead"
+        },
+        "width": {
+          "description": "width of the image. This can be a numeric value representing the fixed width of the image in pixels. But you can also perform simple calculations by adding \"m\" or \"c\" to the value. See imgResource.width for possible options."
+        },
+        "height": {
+          "description": "height of the image. This can be a numeric value representing the fixed height of the image in pixels. But you can also perform simple calculations by adding \"m\" or \"c\" to the value. See imgResource.width for possible options."
+        },
+        "alt": {
+          "description": "Specifies an alternate text for an image"
+        },
+        "onclick": {
+          "description": "JavaScript evaluated for the onclick event"
+        },
+        "data": {
+          "description": "Additional data-* attributes. They will each be added with a \"data-\" prefix."
+        },
+        "maxHeight": {
+          "description": "minimum width of the image"
+        },
+        "dir": {
+          "description": "Text direction for this HTML element. Allowed strings: \"ltr\" (left to right), \"rtl\" (right to left)"
+        },
+        "longdesc": {
+          "description": "Specifies the URL to a document that contains a long description of an image"
+        },
+        "lang": {
+          "description": "Language for this element. Use short names specified in RFC 1766"
+        },
+        "crop": {
+          "description": "overrule cropping of image (setting to FALSE disables the cropping set in FileReference)"
+        },
+        "style": {
+          "description": "Individual CSS styles for this element"
+        },
+        "ismap": {
+          "description": "Specifies an image as a server-side image-map. Rarely used. Look at usemap instead"
+        },
+        "minWidth": {
+          "description": "minimum width of the image"
+        },
+        "usemap": {
+          "description": "Specifies an image as a client-side image-map"
+        },
+        "cropVariant": {
+          "description": "select a cropping variant, in case multiple croppings have been specified or stored in FileReference"
+        },
+        "absolute": {
+          "description": "Force absolute URL"
+        },
+        "class": {
+          "description": "CSS class(es) for this element"
+        },
+        "title": {
+          "description": "Tooltip text of element"
+        },
+        "minHeight": {
+          "description": "minimum width of the image"
+        },
+        "id": {
+          "description": "Unique (in this file) identifier for this HTML element."
+        },
+        "image": {
+          "description": "a FAL object"
+        },
+        "accesskey": {
+          "description": "Keyboard shortcut to access this element"
+        },
+        "tabindex": {
+          "description": "Specifies the tab order of this element"
+        },
+        "additionalAttributes": {
+          "description": "Additional tag attributes. They will be added directly to the resulting HTML tag."
+        }
+      },
+      "description": "Resizes a given image (if required) and renders the respective img tag"
+    },
+    "cache.disable": {
+      "description": "ViewHelper to disable template compiling"
+    },
+    "flashMessages": {
+      "properties": {
+        "as": {
+          "description": "The name of the current flashMessage variable for rendering inside"
+        },
+        "queueIdentifier": {
+          "description": "Flash-message queue to use"
+        }
+      },
+      "description": "View helper which renders the flash messages (if there are any) as an unsorted list."
+    },
+    "variable": {
+      "mandatoryProperties": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "description": "Name of variable to create"
+        },
+        "value": {
+          "description": "Value to assign. If not in arguments then taken from tag content"
+        }
+      },
+      "description": "Variable assigning ViewHelper"
+    },
+    "form.button": {
+      "properties": {
+        "form": {
+          "description": "Specifies one or more forms the button belongs to"
+        },
+        "formmethod": {
+          "description": "Specifies how to send the form-data (which HTTP method to use). Only for type=\"submit\" (e.g. \"get\" or \"post\")"
+        },
+        "autofocus": {
+          "description": "Specifies that a button should automatically get focus when the page loads"
+        },
+        "onclick": {
+          "description": "JavaScript evaluated for the onclick event"
+        },
+        "data": {
+          "description": "Additional data-* attributes. They will each be added with a \"data-\" prefix."
+        },
+        "name": {
+          "description": "Name of input tag"
+        },
+        "dir": {
+          "description": "Text direction for this HTML element. Allowed strings: \"ltr\" (left to right), \"rtl\" (right to left)"
+        },
+        "lang": {
+          "description": "Language for this element. Use short names specified in RFC 1766"
+        },
+        "formenctype": {
+          "description": "Specifies how form-data should be encoded before sending it to a server. Only for type=\"submit\" (e.g. \"application\/x-www-form-urlencoded\", \"multipart\/form-data\" or \"text\/plain\")"
+        },
+        "value": {
+          "description": "Value of input tag"
+        },
+        "style": {
+          "description": "Individual CSS styles for this element"
+        },
+        "property": {
+          "description": "Name of Object Property. If used in conjunction with <f:form object=\"...\">, \"name\" and \"value\" properties will be ignored."
+        },
+        "formtarget": {
+          "description": "Specifies where to display the response after submitting the form. Only for type=\"submit\" (e.g. \"_blank\", \"_self\", \"_parent\", \"_top\", \"framename\")"
+        },
+        "class": {
+          "description": "CSS class(es) for this element"
+        },
+        "title": {
+          "description": "Tooltip text of element"
+        },
+        "type": {
+          "description": "Specifies the type of button (e.g. \"button\", \"reset\" or \"submit\")"
+        },
+        "formaction": {
+          "description": "Specifies where to send the form-data when a form is submitted. Only for type=\"submit\""
+        },
+        "id": {
+          "description": "Unique (in this file) identifier for this HTML element."
+        },
+        "formnovalidate": {
+          "description": "Specifies that the form-data should not be validated on submission. Only for type=\"submit\""
+        },
+        "accesskey": {
+          "description": "Keyboard shortcut to access this element"
+        },
+        "disabled": {
+          "description": "Specifies that the input element should be disabled when the page loads"
+        },
+        "tabindex": {
+          "description": "Specifies the tab order of this element"
+        },
+        "additionalAttributes": {
+          "description": "Additional tag attributes. They will be added directly to the resulting HTML tag."
+        }
+      },
+      "description": "Creates a button."
+    },
+    "be.pageRenderer": {
+      "properties": {
+        "includeRequireJsModules": {
+          "description": "List of RequireJS modules to be loaded"
+        },
+        "addJsInlineLabels": {
+          "description": "Custom labels to add to JavaScript inline labels"
+        },
+        "loadExtJs": {
+          "description": "specifies whether to load ExtJS library. Defaults to FALSE. This option will be removed in TYPO3 v9"
+        },
+        "loadJQuery": {
+          "description": "whether to load jQuery library. Defaults to FALSE. This option will be removed in TYPO3 v9"
+        },
+        "loadExtJsTheme": {
+          "description": "whether to load ExtJS \"grey\" theme. Defaults to FALSE. This option will be removed in TYPO3 v9"
+        },
+        "includeJsFiles": {
+          "description": "List of custom JavaScript file to be loaded"
+        },
+        "pageTitle": {
+          "description": "title tag of the module. Not required by default, as BE modules are shown in a frame"
+        },
+        "enableExtJsDebug": {
+          "description": "if TRUE, debug version of ExtJS is loaded. Use this for development only. This option will be removed in TYPO3 v9"
+        },
+        "includeCssFiles": {
+          "description": "List of custom CSS file to be loaded"
+        },
+        "jQueryNamespace": {
+          "description": "Store the jQuery object in a specific namespace. This option will be removed in TYPO3 v9"
+        },
+        "addInlineSettings": {
+          "description": "Adds Javascript Inline Setting"
+        }
+      },
+      "description": "View helper which allows you to create extbase based modules in the style of TYPO3 default modules."
+    },
+    "if": {
+      "properties": {
+        "else": {
+          "description": "Value to be returned if the condition if not met."
+        },
+        "condition": {
+          "description": "Condition expression conforming to Fluid boolean rules"
+        },
+        "then": {
+          "description": "Value to be returned if the condition if met."
+        }
+      },
+      "description": "This view helper implements an if\/else condition."
+    },
+    "form.select.option": {
+      "properties": {
+        "onclick": {
+          "description": "JavaScript evaluated for the onclick event"
+        },
+        "data": {
+          "description": "Additional data-* attributes. They will each be added with a \"data-\" prefix."
+        },
+        "dir": {
+          "description": "Text direction for this HTML element. Allowed strings: \"ltr\" (left to right), \"rtl\" (right to left)"
+        },
+        "lang": {
+          "description": "Language for this element. Use short names specified in RFC 1766"
+        },
+        "value": {
+          "description": "Value to be inserted in HTML tag - must be convertible to string!"
+        },
+        "style": {
+          "description": "Individual CSS styles for this element"
+        },
+        "class": {
+          "description": "CSS class(es) for this element"
+        },
+        "title": {
+          "description": "Tooltip text of element"
+        },
+        "id": {
+          "description": "Unique (in this file) identifier for this HTML element."
+        },
+        "accesskey": {
+          "description": "Keyboard shortcut to access this element"
+        },
+        "selected": {
+          "description": "If filled, overrides automatic detection of selected state for this option"
+        },
+        "tabindex": {
+          "description": "Specifies the tab order of this element"
+        },
+        "additionalAttributes": {
+          "description": "Additional tag attributes. They will be added directly to the resulting HTML tag."
+        }
+      },
+      "description": "Adds custom `<option>` tags inside an `<f:form.select>`"
+    },
+    "then": {
+      "description": "\"THEN\" -> only has an effect inside of \"IF\". See If-ViewHelper for documentation."
+    },
+    "be.buttons.shortcut": {
+      "properties": {
+        "getVars": {
+          "description": "List of GET variables to store. By default the current id, module and all module arguments will be stored"
+        },
+        "setVars": {
+          "description": "List of SET[] variables to store. See DocumentTemplate::makeShortcutIcon(). Normally won't be used by Extbase modules"
+        }
+      },
+      "description": "View helper which returns shortcut button with icon"
+    },
+    "format.json": {
+      "properties": {
+        "forceObject": {
+          "description": "Outputs an JSON object rather than an array"
+        },
+        "value": {
+          "description": "The incoming data to convert, or null if VH children should be used"
+        }
+      },
+      "description": "Wrapper for PHPs json_encode function."
+    },
+    "be.pagePath": {
+      "description": "View helper which returns the current page path as known from TYPO3 backend modules"
+    },
+    "comment": {
+      "description": "This ViewHelper prevents rendering of any content inside the tag"
+    },
+    "link.external": {
+      "mandatoryProperties": [
+        "uri"
+      ],
+      "properties": {
+        "rev": {
+          "description": "Specifies the relationship between the linked document and the current document"
+        },
+        "defaultScheme": {
+          "description": "Scheme the href attribute will be prefixed with if specified $uri does not contain a scheme already"
+        },
+        "onclick": {
+          "description": "JavaScript evaluated for the onclick event"
+        },
+        "data": {
+          "description": "Additional data-* attributes. They will each be added with a \"data-\" prefix."
+        },
+        "name": {
+          "description": "Specifies the name of an anchor"
+        },
+        "uri": {
+          "description": "The URI that will be put in the href attribute of the rendered link tag"
+        },
+        "dir": {
+          "description": "Text direction for this HTML element. Allowed strings: \"ltr\" (left to right), \"rtl\" (right to left)"
+        },
+        "lang": {
+          "description": "Language for this element. Use short names specified in RFC 1766"
+        },
+        "target": {
+          "description": "Specifies where to open the linked document"
+        },
+        "style": {
+          "description": "Individual CSS styles for this element"
+        },
+        "class": {
+          "description": "CSS class(es) for this element"
+        },
+        "title": {
+          "description": "Tooltip text of element"
+        },
+        "rel": {
+          "description": "Specifies the relationship between the current document and the linked document"
+        },
+        "id": {
+          "description": "Unique (in this file) identifier for this HTML element."
+        },
+        "accesskey": {
+          "description": "Keyboard shortcut to access this element"
+        },
+        "tabindex": {
+          "description": "Specifies the tab order of this element"
+        },
+        "additionalAttributes": {
+          "description": "Additional tag attributes. They will be added directly to the resulting HTML tag."
+        }
+      },
+      "description": "A view helper for creating links to external targets."
+    },
+    "spaceless": {
+      "description": "Space Removal ViewHelper"
+    }
+  },
+  "meta": {
+    "ns": "TYPO3\\CMS\\Fluid\\ViewHelpers",
+    "xmlnsPrefix": "f",
+    "version": "8LTS",
+    "xmlns": "http:\/\/typo3.org\/ns\/TYPO3\/CMS\/Fluid\/ViewHelpers"
+  }
+}
