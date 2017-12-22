@@ -1,6 +1,6 @@
 {
   "name": "autocomplete-typo3-fluid",
-  "version": "0.1.2",
+  "version": "0.1.0",
   "description": "Autocompletions for TYPO3 Fluid ViewHelpers",
   "main": "./lib/main",
   "license": "MIT",

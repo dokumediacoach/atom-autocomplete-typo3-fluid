@@ -13,7 +13,7 @@ inlineViewHelperInfoPropertiesMatchPattern = /[a-zA-Z][.a-zA-Z0-9]*(?=:)/g
 inlineViewHelperNameStartPattern = /[^(,]?\s*([a-zA-Z][.a-zA-Z0-9]*):(?:[a-zA-Z][.a-zA-Z0-9]*)?$/
 
 # @getTagViewHelperCompletions Patterns:
-tagViewHelperPropertyStartPattern = /<[a-zA-Z][.a-zA-Z0-9]*:[a-zA-Z][.a-zA-Z0-9]*\s+(?:[a-zA-Z][.a-zA-Z0-9]*="[^"]*"\s+)*(?:[a-zA-Z][.a-zA-Z0-9]*)?$/
+tagViewHelperPropertyStartPattern = /<[a-zA-Z][.a-zA-Z0-9]*:[a-zA-Z][.a-zA-Z0-9]*(?:\s+[a-zA-Z][.a-zA-Z0-9]*="[^"]*")*\s+(?:[a-zA-Z][.a-zA-Z0-9]*)?$/
 tagViewHelperStartPattern = /<[a-zA-Z][.a-zA-Z0-9]*:[a-zA-Z][.a-zA-Z0-9]*\s+[^>]*$/
 tagViewHelperEndPattern = /^[^>]*>$/
 tagViewHelperInfoPattern =/^<([a-zA-Z][.a-zA-Z0-9]*):([a-zA-Z][.a-zA-Z0-9]*)([^>]*)>/g
@@ -78,7 +78,7 @@ module.exports =
           vhEndText = vhEndText.substring 0, closingBracketIndex
         vhEndText = inlineViewHelperEndPattern.exec vhEndText
         viewHelperText = vhStartText + vhEndText
-        return @getViewHelperPropertyCompletions 'inline', viewHelperText, bufferPosition, editor
+        return @getViewHelperPropertyCompletions 'inline', viewHelperText, bufferPosition, editor, prefix
     inScopeRange = @getRangeForScopeAtPosition inlineNotationScope, bufferPosition, editor
     inStartText = editor.getTextInRange [inScopeRange.start, bufferPosition]
     @getViewHelperCompletions 'inline', inStartText, bufferPosition, editor
@@ -91,7 +91,7 @@ module.exports =
       vhEndText = editor.getTextInRange [bufferPosition, vhScopeRange.end]
       vhEndText = tagViewHelperEndPattern.exec vhEndText
       viewHelperText = vhStartText + vhEndText
-      @getViewHelperPropertyCompletions 'tag', viewHelperText, bufferPosition, editor
+      @getViewHelperPropertyCompletions 'tag', viewHelperText, bufferPosition, editor, prefix
     else
       @getViewHelperCompletions 'tag', vhStartText, bufferPosition, editor
 
@@ -114,7 +114,7 @@ module.exports =
       completions.push @buildViewHelperCompletion tagOrInline, nsPrefix, namespace, name, object, autoInsertMandatoryProperties
     completions
 
-  getViewHelperPropertyCompletions: (tagOrInline, viewHelperText, bufferPosition, editor) ->
+  getViewHelperPropertyCompletions: (tagOrInline, viewHelperText, bufferPosition, editor, prefix) ->
     isTag = tagOrInline is 'tag'
     infoPattern = if isTag then tagViewHelperInfoPattern else inlineViewHelperInfoPattern
     propPattern = if isTag then tagViewHelperInfoPropertiesMatchPattern else inlineViewHelperInfoPropertiesMatchPattern
@@ -135,7 +135,7 @@ module.exports =
     completions = []
     viewHelperName = viewHelperInfo.nsPrefix + ':' + viewHelperInfo.name
     for name, object of viewHelperProperties when not viewHelperInfo.properties? or viewHelperInfo.properties.indexOf(name) is -1
-      completions.push @buildViewHelperPropertyCompletion tagOrInline, name, viewHelperName, object.description
+      completions.push @buildViewHelperPropertyCompletion tagOrInline, name, viewHelperName, object.description, prefix
     completions
 
   buildViewHelperCompletion: (tagOrInline, nsPrefix, namespace, name, vhObject, autoInsertMandatoryProperties) ->
@@ -162,13 +162,15 @@ module.exports =
       description: vhObject.description ? "ViewHelper #{name}"
       characterMatchIndices: [0..name.length]
 
-  buildViewHelperPropertyCompletion: (tagOrInline, name, viewHelperName, description) ->
-    snippet: if tagOrInline is 'tag' then "#{name}=\"$1\"$0" else "#{name}: $1"
-    displayText: name
-    type: 'attribute'
-    rightLabel: "#{viewHelperName} property"
-    description: description ? "viewHelper property #{name}"
-    characterMatchIndices: [0..name.length]
+  buildViewHelperPropertyCompletion: (tagOrInline, name, viewHelperName, description, prefix) ->
+    spaceFix = if not prefix.trim() then ' ' else ''
+    completion =
+      snippet: if tagOrInline is 'tag' then "#{spaceFix}#{name}=\"$1\"$0" else "#{spaceFix}#{name}: $1"
+      displayText: name
+      type: 'attribute'
+      rightLabel: "#{viewHelperName} property"
+      description: description ? "viewHelper property #{name}"
+      characterMatchIndices: [0..name.length]
 
   getViewHelperNamespaceFromNsPrefix: (nsPrefix, bufferPosition, editor) ->
     textBuffer = editor.getBuffer()
