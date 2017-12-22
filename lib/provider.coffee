@@ -193,6 +193,7 @@ module.exports =
       namespace = namespaceObject.inline
 
   getConfigVersionForNamespace: (namespace) ->
+    return if not atom.config.get('autocomplete-typo3-fluid.viewHelperNamespaces.' + namespace + '.enabled')
     atom.config.get('autocomplete-typo3-fluid.viewHelperNamespaces.' + namespace + '.version')
 
   removeInlineNotationsFromString: (string) ->
