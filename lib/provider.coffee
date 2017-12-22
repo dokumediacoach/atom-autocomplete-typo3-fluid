@@ -246,25 +246,36 @@ module.exports =
     @getNestingLevelForScope scope, scopeDescriptor
 
   # Get the text in a range for a scope at a buffer position.
+  # Other than the TextEditor API Method (bufferRangeForScopeAtPosition) this
+  # can get a range that may reach over multiple lines.
   #
   # * `scope` A scope name {String}.
   # * `positionParam` A {Point} inside the range.
   # * `editor` A {TextEditor} instance.
+  # * `limitScope` An {Object} that defauts to null with the following keys
+  #   * `start` A scope name {String} indicating the start of the higher level `scope`
+  #   * `end` A scope name {String} indicating the end of the higher level `scope`
+  # * `skipBlankRows` A {boolean}, true to skip blank rows when scope range
+  #   reaches over multiple lines, defaults to true.
   #
   # Returns a {String}.
-  getRangeForScopeAtPosition: (scope, position, editor) ->
+  getRangeForScopeAtPosition: (scope, position, editor, limitScope = null, skipBlankRows = true) ->
     scopeRange = editor.bufferRangeForScopeAtPosition scope, position
     return if not scopeRange?
     loop
       break if scopeRange.start.column
-      newPosition = @getPreviousLineEndPosition scopeRange.start, editor
+      if limitScope?.start?
+        break if @hasScopeAtPosition limitScope.start, scopeRange.start, editor
+      newPosition = @getPreviousLineEndPosition scopeRange.start, editor, skipBlankRows
       break if not newPosition?
       tempRange = editor.bufferRangeForScopeAtPosition scope, newPosition
       break if not tempRange?
       scopeRange = scopeRange.union tempRange
     loop
       break if scopeRange.end.column <= editor.lineTextForBufferRow(scopeRange.end.row).length
-      newPosition = @getNextLineStartPosition scopeRange.end, editor
+      if limitScope?.end?
+        break if @hasScopeAtPosition limitScope.end, scopeRange.end, editor
+      newPosition = @getNextLineStartPosition scopeRange.end, editor, skipBlankRows
       break if not newPosition?
       tempRange = editor.bufferRangeForScopeAtPosition scope, newPosition
       break if not tempRange?
@@ -275,13 +286,17 @@ module.exports =
   #
   # * `positionParam` A {Point} from where to move upwards.
   # * `editor` A {TextEditor} instance.
+  # * `skipBlankRows` A {boolean}, true to skip blank rows, defaults to true.
   #
   # Returns a {Point}.
-  getPreviousLineEndPosition: (positionParam, editor) ->
+  getPreviousLineEndPosition: (positionParam, editor, skipBlankRows = true) ->
     position = positionParam.copy()
     textBuffer = editor.getBuffer()
-    previousRow =  textBuffer.previousNonBlankRow(position.row)
-    return null if not previousRow?
+    if skipBlankRows
+      previousRow = textBuffer.previousNonBlankRow(position.row)
+    else
+      previousRow = position.row - 1
+    return null if not previousRow? or previousRow < 0
     position.row = previousRow
     position.column = textBuffer.lineLengthForRow(previousRow)
     position
@@ -290,13 +305,17 @@ module.exports =
   #
   # * `positionParam` A {Point} from where to move downwards.
   # * `editor` A {TextEditor} instance.
+  # * `skipBlankRows` A {boolean}, true to skip blank rows, defaults to true.
   #
   # Returns a {Point}.
-  getNextLineStartPosition: (positionParam, editor) ->
+  getNextLineStartPosition: (positionParam, editor, skipBlankRows = true) ->
     position = positionParam.copy()
     textBuffer = editor.getBuffer()
-    nextRow = textBuffer.nextNonBlankRow(position.row)
-    return null if not nextRow?
+    if skipBlankRows
+      nextRow = textBuffer.nextNonBlankRow(position.row)
+    else
+      nextRow = position.row + 1
+    return null if not nextRow? or nextRow > textBuffer.getLineCount()
     position.row = nextRow
     position.column = 0
     position
