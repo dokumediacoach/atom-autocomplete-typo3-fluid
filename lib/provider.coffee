@@ -34,9 +34,6 @@ inlineNotationScope = 'meta.inline-notation.typo3-fluid'
 inlinePropertiesScope = 'meta.inline.view-helper.properties.typo3-fluid'
 inlineViewHelperScope = 'meta.inline.view-helper.typo3-fluid'
 
-# won't work this way any more:
-tagViewHelperScope = 'meta.fluid-tag.view-helper.typo3-fluid'
-
 tagAttributesScope = 'meta.tag.start.attributes.typo3-fluid'
 tagStartScope = 'meta.tag.start.typo3-fluid'
 
