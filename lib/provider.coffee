@@ -37,6 +37,8 @@ inlineViewHelperScope = 'meta.inline.view-helper.typo3-fluid'
 # won't work this way any more:
 tagViewHelperScope = 'meta.fluid-tag.view-helper.typo3-fluid'
 
+tagAttributesScope = 'meta.tag.start.attributes.typo3-fluid'
+tagStartScope = 'meta.tag.start.typo3-fluid'
 
 ## Completion Suggestions
 
@@ -56,7 +58,7 @@ module.exports =
   getSuggestions: (request) ->
     if @hasScope inlineNotationScope, request.scopeDescriptor
       @getInlineNotationCompletions request
-    else if @hasScope tagViewHelperScope, request.scopeDescriptor
+    else if @hasScope tagStartScope, request.scopeDescriptor
       @getTagViewHelperCompletions request
     else
       []
@@ -85,7 +87,7 @@ module.exports =
     @getViewHelperCompletions 'inline', inStartText, bufferPosition, editor
 
   getTagViewHelperCompletions: ({prefix, scopeDescriptor, bufferPosition, editor}) ->
-    vhScopeRange = @getRangeForScopeAtPosition tagViewHelperScope, bufferPosition, editor
+    vhScopeRange = @getRangeForScopeAtPosition tagStartScope, bufferPosition, editor
     vhStartText = editor.getTextInRange [vhScopeRange.start, bufferPosition]
     if tagViewHelperPropertyStartPattern.test vhStartText
       vhStartText = tagViewHelperStartPattern.exec vhStartText
@@ -164,14 +166,12 @@ module.exports =
       characterMatchIndices: [0..name.length]
 
   buildViewHelperPropertyCompletion: (tagOrInline, name, viewHelperName, description, prefix) ->
-    spaceFix = if not prefix.trim() then ' ' else ''
-    completion =
-      snippet: if tagOrInline is 'tag' then "#{spaceFix}#{name}=\"$1\"$0" else "#{spaceFix}#{name}: $1"
-      displayText: name
-      type: 'attribute'
-      rightLabel: "#{viewHelperName} property"
-      description: description ? "viewHelper property #{name}"
-      characterMatchIndices: [0..name.length]
+    snippet: if tagOrInline is 'tag' then "#{name}=\"$1\"$0" else "#{name}: $1"
+    displayText: name
+    type: 'attribute'
+    rightLabel: "#{viewHelperName} property"
+    description: description ? "viewHelper property #{name}"
+    characterMatchIndices: [0..name.length]
 
   getViewHelperNamespaceFromNsPrefix: (nsPrefix, bufferPosition, editor) ->
     textBuffer = editor.getBuffer()

@@ -1,0 +1,26 @@
+{
+  "elementRules": {
+    "localViewHelpers": ["then", "else", "case", "defaultCase"],
+    "parent": {
+      "if": {
+        "firstChild": ["#global", "then"],
+        "after": [
+          {"then": ["else"]},
+          {"else": ["else"]}
+        ]
+      },
+      "switch": {
+        "firstChild": ["case"],
+        "after": [
+          {"case": ["case", "defaultCase"]}
+        ]
+      }
+    }
+  },
+  "meta": {
+    "ns": "TYPO3\\CMS\\Fluid\\ViewHelpers",
+    "xmlnsPrefix": "f",
+    "version": "8LTS",
+    "xmlns": "http:\/\/typo3.org\/ns\/TYPO3\/CMS\/Fluid\/ViewHelpers"
+  }
+}
