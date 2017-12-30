@@ -3,17 +3,18 @@
     "localViewHelpers": ["then", "else", "case", "defaultCase"],
     "parent": {
       "if": {
-        "firstChild": ["#global", "then"],
-        "after": [
-          {"then": ["else"]},
-          {"else": ["else"]}
-        ]
+        "firstChild": ["then", "#global"],
+        "after": {
+          "then": ["else"],
+          "else": ["else"]
+        }
       },
       "switch": {
         "firstChild": ["case"],
-        "after": [
-          {"case": ["case", "defaultCase"]}
-        ]
+        "after": {
+          "case": ["case", "defaultCase"],
+          "defaultCase": []
+        }
       }
     }
   },
