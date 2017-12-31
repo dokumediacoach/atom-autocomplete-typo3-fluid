@@ -21,7 +21,7 @@ tagViewHelperInfoPropertiesMatchPattern = /[a-zA-Z][.a-zA-Z0-9]*(?==)/g
 tagViewHelperNameStartPattern = /<([a-zA-Z][.a-zA-Z0-9]*):(?:[a-zA-Z][.a-zA-Z0-9]*)?$/
 
 # @getViewHelperNamespaceFromNsPrefix Patterns:
-xmlNamespacePattern = /xmlns:([_a-zA-Z][-._a-zA-Z0-9]*)="([^"]*)"/
+xmlNamespacePattern = /xmlns:([_a-zA-Z][-._a-zA-Z0-9]*)=(?:"([^"]+)"|\'([^\']+)\')/
 inlineNamespacePattern = /{namespace\s+([_a-zA-Z][-._a-zA-Z0-9]*)=([^}\s]+)\s*}/
 
 # @getParentElement Pattern:
@@ -223,13 +223,15 @@ module.exports =
       row = textBuffer.previousNonBlankRow row
       return if not row?
       lineText = editor.lineTextForBufferRow row
-      if (xmlns = xmlNamespacePattern.exec lineText)?
-        if xmlns[1] is nsPrefix
-          return {xmlns: xmlns[2]}
+      if xmlNamespacePattern.test lineText
+        xmlNamespaceMatches = xmlNamespacePattern.exec lineText
+        if xmlNamespaceMatches[1] is nsPrefix
+          return {xmlns: xmlNamespaceMatches[2] ? xmlNamespaceMatches[3]}
         continue
-      if (inline = inlineNamespacePattern.exec lineText)?
-        if inline[1] is nsPrefix
-          return {inline: inline[2]}
+      if inlineNamespacePattern.test lineText
+        inlineNamespaceMatches = inlineNamespacePattern.exec lineText
+        if inlineNamespaceMatches[1] is nsPrefix
+          return {inline: inlineNamespaceMatches[2]}
 
   getCompletionsNamespace: (namespaceObject) ->
     if namespaceObject.xmlns?
