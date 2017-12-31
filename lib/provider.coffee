@@ -24,6 +24,9 @@ tagViewHelperNameStartPattern = /<([a-zA-Z][.a-zA-Z0-9]*):(?:[a-zA-Z][.a-zA-Z0-9
 xmlNamespacePattern = /xmlns:([_a-zA-Z][-._a-zA-Z0-9]*)="([^"]*)"/
 inlineNamespacePattern = /{namespace\s+([_a-zA-Z][-._a-zA-Z0-9]*)=([^}\s]+)\s*}/
 
+# @getParentElement Pattern:
+elementScopePattern = /^meta\.tag\.element\.([a-zA-Z][.a-zA-Z0-9]*):([a-zA-Z][.a-zA-Z0-9]*)\.typo3-fluid$/
+
 # @removeInlineNotationsFromString Pattern:
 innermostInlineNotationPattern = /{([^{}]*)}/g
 
@@ -36,6 +39,7 @@ inlineViewHelperScope = 'meta.inline.view-helper.typo3-fluid'
 
 tagAttributesScope = 'meta.tag.start.attributes.typo3-fluid'
 tagStartScope = 'meta.tag.start.typo3-fluid'
+tagContentScope = 'meta.tag.content.typo3-fluid'
 
 ## Completion Suggestions
 
@@ -109,10 +113,51 @@ module.exports =
     viewHelpers = @completions.viewHelpers[namespace][version]
     return [] if not viewHelpers?
     autoInsertMandatoryProperties = atom.config.get('autocomplete-typo3-fluid.autoInsertMandatoryProperties')
+    if tagOrInline is 'tag' and @completions.elementRules?[namespace][version]?
+      parent = @getParentElement nsPrefix, bufferPosition, editor
+      if parent? and (parentElementRules = @completions.elementRules[namespace][version].parent?[parent])?
+        viewHelpers = @getLocalViewHelperElements nsPrefix, parent, parentElementRules, viewHelpers, bufferPosition, editor
     completions = []
     for name, object of viewHelpers
       completions.push @buildViewHelperCompletion tagOrInline, nsPrefix, namespace, name, object, autoInsertMandatoryProperties
     completions
+
+  getLocalViewHelperElements: (nsPrefix, parent, parentElementRules, viewHelpers, bufferPosition, editor) ->
+    tagContentScopeRange = @getRangeForScopeAtPosition tagContentScope, bufferPosition, editor
+    tagContentStartText = editor.getTextInRange [tagContentScopeRange.start, bufferPosition]
+    parentNestingLevel = @getNestingLevelForScopeAtPosition "meta.tag.element.#{nsPrefix}:#{parent}.typo3-fluid", bufferPosition, editor
+    if parentNestingLevel > 1
+      nestedParentPattern = new RegExp "<#{nsPrefix}:#{parent}(?:\\s[^>]*?[^>\/]?)?>((?:.|[\\r\\n\\u2028\\u2029])*?)$"
+      nestedParentPatternMatches = nestedParentPattern.exec tagContentStartText
+      tagContentStartText = nestedParentPatternMatches[1]
+    precedingSiblingPattern = new RegExp "(?:<\/#{nsPrefix}:([a-zA-Z][.a-zA-Z0-9]*)>|<#{nsPrefix}:([a-zA-Z][.a-zA-Z0-9]*)(?:\\s[^>]*?)?\/>)(?:.|[\\r\\n\\u2028\\u2029])*?$"
+    precedingSiblingMatches = precedingSiblingPattern.exec tagContentStartText
+    if precedingSiblingMatches?
+      precedingSibling = precedingSiblingMatches[1] ? precedingSiblingMatches[2]
+    if precedingSibling? and parentElementRules.after?[precedingSibling]?
+      returnViewHelpers = {}
+      for element in parentElementRules.after?[precedingSibling]
+        if viewHelpers[element]?
+          returnViewHelpers[element] = viewHelpers[element]
+    else if parentElementRules.firstChild?
+      returnViewHelpers = {}
+      for element in parentElementRules.firstChild
+        if viewHelpers[element]?
+          returnViewHelpers[element] = viewHelpers[element]
+    returnViewHelpers ? viewHelpers
+
+  getParentElement: (nsPrefix, bufferPosition, editor) ->
+    scopeDescriptor = editor.scopeDescriptorForBufferPosition(bufferPosition)
+    scopesArray = scopeDescriptor.getScopesArray()
+    for scope in scopesArray
+      if elementScopePattern.test scope
+        elementMatches = elementScopePattern.exec scope
+        if elementMatches[1] is nsPrefix
+          element = elementMatches[2]
+        continue
+      if scope is tagContentScope and element?
+        parent = element
+    parent
 
   getViewHelperPropertyCompletions: (tagOrInline, viewHelperText, bufferPosition, editor, prefix) ->
     isTag = tagOrInline is 'tag'

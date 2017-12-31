@@ -54,7 +54,7 @@ mergeElementRules = (ns, version, elementRules) ->
     if not completions.elementRules[ns][version].parent?
       completions.elementRules[ns][version].parent = {}
     for name, object of elementRules.parent
-      do (name, object) ->
+      do (ns, version, name, object) ->
         if not completions.elementRules[ns][version].parent[name]?
           completions.elementRules[ns][version].parent[name] = {}
         if object.firstChild?
