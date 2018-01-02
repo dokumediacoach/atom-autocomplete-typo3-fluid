@@ -4,6 +4,9 @@ configSchema =
   autoInsertMandatoryProperties:
     type: 'boolean'
     default: true
+  eddEndTagOnElementCompletion:
+    type: 'boolean'
+    default: true
   viewHelperNamespaces:
     title: 'ViewHelper Namespaces'
     type: 'object'
