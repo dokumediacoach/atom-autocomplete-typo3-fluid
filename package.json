@@ -9,7 +9,7 @@
     "atom": ">=1.0.0 <2.0.0"
   },
   "dependencies": {
-    "language-typo3-fluid": "^0.1.0"
+    "language-typo3-fluid": "^0.2.0"
   },
   "providedServices": {
     "autocomplete.provider": {

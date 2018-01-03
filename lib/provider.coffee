@@ -107,12 +107,7 @@ module.exports =
       @getViewHelperPropertyCompletions 'tag', viewHelperText, bufferPosition, editor, prefix
     else if not activatedManually and tagViewHelperSelfCloseStartPattern.test vhStartText
       startTagMatches = tagViewHelperSelfCloseStartPattern.exec vhStartText
-      textBuffer = editor.getBuffer()
-      lineEnd = textBuffer.lineLengthForRow(bufferPosition.row)
-      lineEndText = editor.getTextInRange [bufferPosition, [bufferPosition.row, lineEnd]]
-      emptyElementEndPattern = new RegExp "^><\/#{startTagMatches[1]}>"
-      return [] if not emptyElementEndPattern.test lineEndText
-      [@buildSelfCloseElementCompletion startTagMatches[1]]
+      @getSelfClosingTagCompletion startTagMatches[1], bufferPosition, editor
     else
       @getViewHelperCompletions 'tag', vhStartText, bufferPosition, editor
 
@@ -131,7 +126,16 @@ module.exports =
     description: "close #{nsPrefix}:#{parent} ViewHelper"
     characterMatchIndices: [0..parent.length-1]
 
-  buildSelfCloseElementCompletion: (emptyElement) ->
+  getSelfClosingTagCompletion: (elementName, bufferPosition, editor) ->
+    textBuffer = editor.getBuffer()
+    lineEnd = textBuffer.lineLengthForRow(bufferPosition.row)
+    lineEndText = editor.getTextInRange [bufferPosition, [bufferPosition.row, lineEnd]]
+    emptyElementEndPattern = new RegExp "^><\/#{elementName}>"
+    if not emptyElementEndPattern.test lineEndText
+      return []
+    [@buildSelfClosingTagCompletion elementName]
+
+  buildSelfClosingTagCompletion: (emptyElement) ->
     text: '/'
     replacementPrefix: '/'
     displayText: "#{emptyElement} self-close"
@@ -162,6 +166,8 @@ module.exports =
       parent = @getParentElement nsPrefix, bufferPosition, editor
       if parent? and (parentElementRules = @completions.elementRules[namespace][version].parent?[parent])?
         viewHelpers = @getLocalViewHelperElements nsPrefix, parent, parentElementRules, viewHelpers, bufferPosition, editor
+      else if @completions.elementRules[namespace][version].global?
+        viewHelpers = @getGlobalViewHelperElements @completions.elementRules[namespace][version].global, viewHelpers
     autoInsertMandatoryProperties = atom.config.get('autocomplete-typo3-fluid.autoInsertMandatoryProperties')
     eddEndTagOnElementCompletion = atom.config.get('autocomplete-typo3-fluid.eddEndTagOnElementCompletion')
     completions = []
@@ -192,6 +198,13 @@ module.exports =
         if viewHelpers[element]?
           returnViewHelpers[element] = viewHelpers[element]
     returnViewHelpers ? viewHelpers
+
+  getGlobalViewHelperElements: (globalViewHelpersArray, viewHelpers) ->
+    returnViewHelpers = {}
+    for element in globalViewHelpersArray
+      if viewHelpers[element]?
+        returnViewHelpers[element] = viewHelpers[element]
+    returnViewHelpers
 
   getParentElement: (nsPrefix, bufferPosition, editor) ->
     scopeDescriptor = editor.scopeDescriptorForBufferPosition(bufferPosition)
