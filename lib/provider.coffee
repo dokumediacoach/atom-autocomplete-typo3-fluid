@@ -1,5 +1,4 @@
-# jsons go in this folder, have a look at ../completions/index.coffee
-COMPLETIONS = require '../completions'
+COMPLETIONS = require '../compiledCompletions.json'
 
 
 ## Regex Patterns
@@ -37,6 +36,8 @@ selfCloseElementCompletionDisplayTextPattern = /^([a-zA-Z][.a-zA-Z0-9]*:[a-zA-Z]
 # @removeInlineNotationsFromString Pattern:
 innermostInlineNotationPattern = /{([^{}]*)}/g
 
+# @resolveRuleViewHelperArray Pattern:
+ruleViewHelperNamePattern = /^<(g|l)>([a-zA-Z][.a-zA-Z0-9]*)$/
 
 ## Scopes
 
@@ -91,7 +92,7 @@ module.exports =
           vhEndText = vhEndText.substring 0, closingBracketIndex
         vhEndText = inlineViewHelperEndPattern.exec vhEndText
         viewHelperText = vhStartText + vhEndText
-        return @getViewHelperPropertyCompletions 'inline', viewHelperText, bufferPosition, editor, prefix
+        return @getViewHelperPropertyCompletions 'inline', viewHelperText, bufferPosition, editor
     inScopeRange = @getRangeForScopeAtPosition inlineNotationScope, bufferPosition, editor
     inStartText = editor.getTextInRange [inScopeRange.start, bufferPosition]
     @getViewHelperCompletions 'inline', inStartText, bufferPosition, editor
@@ -104,7 +105,7 @@ module.exports =
       vhEndText = editor.getTextInRange [bufferPosition, vhScopeRange.end]
       vhEndText = tagViewHelperEndPattern.exec vhEndText
       viewHelperText = vhStartText + vhEndText
-      @getViewHelperPropertyCompletions 'tag', viewHelperText, bufferPosition, editor, prefix
+      @getViewHelperPropertyCompletions 'tag', viewHelperText, bufferPosition, editor
     else if not activatedManually and tagViewHelperSelfCloseStartPattern.test vhStartText
       startTagMatches = tagViewHelperSelfCloseStartPattern.exec vhStartText
       @getSelfClosingTagCompletion startTagMatches[1], bufferPosition, editor
@@ -153,57 +154,58 @@ module.exports =
     startPattern = if tagOrInline is 'tag' then tagViewHelperNameStartPattern else inlineViewHelperNameStartPattern
     viewHelperNameStart = startPattern.exec viewHelperStartText
     return [] if not viewHelperNameStart?
-    nsPrefix = viewHelperNameStart[1]
-    namespaceObject = @getViewHelperNamespaceFromNsPrefix nsPrefix, bufferPosition, editor
-    return [] if not namespaceObject?
-    namespace = @getCompletionsNamespace namespaceObject
-    return [] if not namespace?
-    version = @getConfigVersionForNamespace namespace
-    return [] if not version?
-    viewHelpers = @completions.viewHelpers[namespace][version]
+    namespacePrefix = viewHelperNameStart[1]
+    namespace = @getViewHelperNamespaceFromNamespacePrefix namespacePrefix, bufferPosition, editor
+    return [] if not namespace? or not @completions.namespaces?[namespace]?.viewHelpers?
+    if tagOrInline is 'tag' and @completions.namespaces[namespace].elementRules?
+      parent = @getParentElement namespacePrefix, bufferPosition, editor
+      if parent? and (parentElementRules = @completions.namespaces[namespace].elementRules.parent?[parent])?
+        viewHelpers = @getRuleViewHelperElements namespacePrefix, namespace, parent, parentElementRules, bufferPosition, editor
+    if not viewHelpers?
+      viewHelpers = @completions.namespaces[namespace].viewHelpers.global
     return [] if not viewHelpers?
-    if tagOrInline is 'tag' and @completions.elementRules?[namespace][version]?
-      parent = @getParentElement nsPrefix, bufferPosition, editor
-      if parent? and (parentElementRules = @completions.elementRules[namespace][version].parent?[parent])?
-        viewHelpers = @getLocalViewHelperElements nsPrefix, parent, parentElementRules, viewHelpers, bufferPosition, editor
-      else if @completions.elementRules[namespace][version].global?
-        viewHelpers = @getGlobalViewHelperElements @completions.elementRules[namespace][version].global, viewHelpers
-    autoInsertMandatoryProperties = atom.config.get('autocomplete-typo3-fluid.autoInsertMandatoryProperties')
-    eddEndTagOnElementCompletion = atom.config.get('autocomplete-typo3-fluid.eddEndTagOnElementCompletion')
     completions = []
     for name, object of viewHelpers
-      completions.push @buildViewHelperCompletion tagOrInline, nsPrefix, namespace, name, object, autoInsertMandatoryProperties, eddEndTagOnElementCompletion
+      completions.push @buildViewHelperCompletion tagOrInline, namespacePrefix, namespace, name, object
+    if tagOrInline is 'inline' and (localViewHelpers = @completions.namespaces[namespace].viewHelpers.local)?
+      for name, object of localViewHelpers
+        completions.push @buildViewHelperCompletion tagOrInline, namespacePrefix, namespace, name, object
     completions
 
-  getLocalViewHelperElements: (nsPrefix, parent, parentElementRules, viewHelpers, bufferPosition, editor) ->
+  getRuleViewHelperElements: (namespacePrefix, namespace, parent, parentElementRules, bufferPosition, editor) ->
     tagContentScopeRange = @getRangeForScopeAtPosition tagContentScope, bufferPosition, editor
     tagContentStartText = editor.getTextInRange [tagContentScopeRange.start, bufferPosition]
-    parentNestingLevel = @getNestingLevelForScopeAtPosition "meta.tag.element.#{nsPrefix}:#{parent}.typo3-fluid", bufferPosition, editor
+    parentNestingLevel = @getNestingLevelForScopeAtPosition "meta.tag.element.#{namespacePrefix}:#{parent}.typo3-fluid", bufferPosition, editor
     if parentNestingLevel > 1
-      nestedParentPattern = new RegExp "<#{nsPrefix}:#{parent}(?:\\s[^>]*?[^>\/]?)?>((?:.|[\\r\\n\\u2028\\u2029])*?)$"
+      nestedParentPattern = new RegExp "<#{namespacePrefix}:#{parent}(?:\\s[^>]*?[^>\/]?)?>((?:.|[\\r\\n\\u2028\\u2029])*?)$"
       nestedParentPatternMatches = nestedParentPattern.exec tagContentStartText
       tagContentStartText = nestedParentPatternMatches[1]
-    precedingSiblingPattern = new RegExp "(?:<\/#{nsPrefix}:([a-zA-Z][.a-zA-Z0-9]*)>|<#{nsPrefix}:([a-zA-Z][.a-zA-Z0-9]*)(?:\\s[^>]*?)?\/>)(?:.|[\\r\\n\\u2028\\u2029])*?$"
+    precedingSiblingPattern = new RegExp "(?:<\/#{namespacePrefix}:([a-zA-Z][.a-zA-Z0-9]*)>|<#{namespacePrefix}:([a-zA-Z][.a-zA-Z0-9]*)(?:\\s[^>]*?)?\/>)(?:.|[\\r\\n\\u2028\\u2029])*?$"
     precedingSiblingMatches = precedingSiblingPattern.exec tagContentStartText
     if precedingSiblingMatches?
       precedingSibling = precedingSiblingMatches[1] ? precedingSiblingMatches[2]
     if precedingSibling? and parentElementRules.after?[precedingSibling]?
-      returnViewHelpers = {}
-      for element in parentElementRules.after?[precedingSibling]
-        if viewHelpers[element]?
-          returnViewHelpers[element] = viewHelpers[element]
+      ruleViewHelpers = @resolveRuleViewHelperArray parentElementRules.after[precedingSibling], namespace
     else if parentElementRules.firstChild?
-      returnViewHelpers = {}
-      for element in parentElementRules.firstChild
-        if viewHelpers[element]?
-          returnViewHelpers[element] = viewHelpers[element]
-    returnViewHelpers ? viewHelpers
+      ruleViewHelpers = @resolveRuleViewHelperArray parentElementRules.firstChild, namespace
+    return if not ruleViewHelpers?
+    ruleViewHelpers
 
-  getGlobalViewHelperElements: (globalViewHelpersArray, viewHelpers) ->
+  resolveRuleViewHelperArray: (viewHelperArray, namespace) ->
     returnViewHelpers = {}
-    for element in globalViewHelpersArray
-      if viewHelpers[element]?
-        returnViewHelpers[element] = viewHelpers[element]
+    for name in viewHelperArray
+      nameMatches = ruleViewHelperNamePattern.exec name
+      if nameMatches?
+        if nameMatches[1] is 'l' and @completions.namespaces[namespace].viewHelpers.local?.hasOwnProperty nameMatches[2]
+          returnViewHelpers[nameMatches[2]] = @completions.namespaces[namespace].viewHelpers.local[nameMatches[2]]
+          continue
+        if nameMatches[1] is 'g' and @completions.namespaces[namespace].viewHelpers.global?.hasOwnProperty nameMatches[2]
+          returnViewHelpers[nameMatches[2]] = @completions.namespaces[namespace].viewHelpers.global[nameMatches[2]]
+          continue
+      if @completions.namespaces[namespace].viewHelpers.local?.hasOwnProperty name
+        returnViewHelpers[name] = @completions.namespaces[namespace].viewHelpers.local[name]
+      else if @completions.namespaces[namespace].viewHelpers.global?.hasOwnProperty name
+        returnViewHelpers[name] = @completions.namespaces[namespace].viewHelpers.global[name]
     returnViewHelpers
 
   getParentElement: (nsPrefix, bufferPosition, editor) ->
@@ -225,67 +227,41 @@ module.exports =
     propPattern = if isTag then tagViewHelperInfoPropertiesMatchPattern else inlineViewHelperInfoPropertiesMatchPattern
     viewHelperInfo = {}
     viewHelperText.replace infoPattern, (all, nsPrefix, name, properties) ->
-      viewHelperInfo.nsPrefix = nsPrefix
+      viewHelperInfo.namespacePrefix = nsPrefix
       viewHelperInfo.name = name
       if properties
         viewHelperInfo.properties = properties.match propPattern
-    namespaceObject = @getViewHelperNamespaceFromNsPrefix viewHelperInfo.nsPrefix, bufferPosition, editor
-    return [] if not namespaceObject?
-    namespace = @getCompletionsNamespace namespaceObject
-    return [] if not namespace?
-    version = @getConfigVersionForNamespace namespace
-    return [] if not version?
-    viewHelperProperties = @completions.viewHelpers[namespace][version][viewHelperInfo.name].properties
+    namespace = @getViewHelperNamespaceFromNamespacePrefix viewHelperInfo.namespacePrefix, bufferPosition, editor
+    return [] if not namespace? or not @completions.namespaces?[namespace]?
+    viewHelperProperties = @completions.namespaces[namespace].viewHelperProperties?[viewHelperInfo.name]
     return [] if not viewHelperProperties?
     completions = []
     viewHelperName = viewHelperInfo.nsPrefix + ':' + viewHelperInfo.name
     for name, object of viewHelperProperties when not viewHelperInfo.properties? or viewHelperInfo.properties.indexOf(name) is -1
-      completions.push @buildViewHelperPropertyCompletion tagOrInline, name, viewHelperName, object.description, prefix
+      completions.push @buildViewHelperPropertyCompletion tagOrInline, name, viewHelperName, object
     completions
 
-  buildViewHelperCompletion: (tagOrInline, nsPrefix, namespace, name, vhObject, autoInsertMandatoryProperties, eddEndTagOnElementCompletion) ->
-    isTag = tagOrInline is 'tag'
-    mandatoryProperties = vhObject.mandatoryProperties
-    if autoInsertMandatoryProperties and mandatoryProperties?
-      properties = ''
-      if isTag
-        for property, i in mandatoryProperties
-          properties += " #{property}=\"$#{i + 1}\""
-        properties += "$#{mandatoryProperties.length + 1}"
-      else
-        for property, i in mandatoryProperties
-          if i
-            properties += ', '
-          properties += "#{property}: $#{i + 1}"
-    else
-      properties = '$1'
-    snippet = name
-    if isTag
-      snippet += "#{properties}>$"
-      if eddEndTagOnElementCompletion
-        snippet += if mandatoryProperties? then "#{(mandatoryProperties.length + 2)}" else '2'
-        snippet += "</#{nsPrefix}:#{name}>$0"
-      else
-        snippet += '0'
-    else
-      snippet += "(#{properties})$0"
+  buildViewHelperCompletion: (tagOrInline, namespacePrefix, namespace, name, viewHelperObject) ->
+    snippet = viewHelperObject.snippet[tagOrInline]
+    if tagOrInline is 'tag' and viewHelperObject.snippet.hasOwnProperty endTagEnd
+      snippet += "</#{namespacePrefix}:#{viewHelperObject.snippet.endTagEnd}"
     completion =
       snippet: snippet
-      displayText: "#{nsPrefix}:#{name}"
+      displayText: "#{namespacePrefix}:#{name}"
       type: 'function'
       rightLabel: namespace
-      description: vhObject.description ? "ViewHelper #{name}"
-      characterMatchIndices: [0..name.length-1]
+      description: viewHelperObject.description
+      characterMatchIndices: viewHelperObject.characterMatchIndices
 
-  buildViewHelperPropertyCompletion: (tagOrInline, name, viewHelperName, description, prefix) ->
-    snippet: if tagOrInline is 'tag' then "#{name}=\"$1\"$0" else "#{name}: $1"
+  buildViewHelperPropertyCompletion: (tagOrInline, name, viewHelperName, viewHelperPropertyObject) ->
+    snippet: viewHelperPropertyObject.snippet[tagOrInline]
     displayText: name
     type: 'attribute'
     rightLabel: "#{viewHelperName} property"
-    description: description ? "viewHelper property #{name}"
-    characterMatchIndices: [0..name.length-1]
+    description: viewHelperPropertyObject.description
+    characterMatchIndices: viewHelperPropertyObject.characterMatchIndices
 
-  getViewHelperNamespaceFromNsPrefix: (nsPrefix, bufferPosition, editor) ->
+  getViewHelperNamespaceFromNamespacePrefix: (namespacePrefix, bufferPosition, editor) ->
     textBuffer = editor.getBuffer()
     row = bufferPosition.copy().row
     result = {}
@@ -295,19 +271,14 @@ module.exports =
       lineText = editor.lineTextForBufferRow row
       if xmlNamespacePattern.test lineText
         xmlNamespaceMatches = xmlNamespacePattern.exec lineText
-        if xmlNamespaceMatches[1] is nsPrefix
-          return {xmlns: xmlNamespaceMatches[2] ? xmlNamespaceMatches[3]}
+        if xmlNamespaceMatches[1] is namespacePrefix
+          xmlns = xmlNamespaceMatches[2] ? xmlNamespaceMatches[3]
+          return @completions.nsMap?[xmlns]
         continue
       if inlineNamespacePattern.test lineText
         inlineNamespaceMatches = inlineNamespacePattern.exec lineText
-        if inlineNamespaceMatches[1] is nsPrefix
-          return {inline: inlineNamespaceMatches[2]}
-
-  getCompletionsNamespace: (namespaceObject) ->
-    if namespaceObject.xmlns?
-      namespace = @completions.nsMap[namespaceObject.xmlns]
-    else
-      namespace = namespaceObject.inline
+        if inlineNamespaceMatches[1] is namespacePrefix
+          return inlineNamespaceMatches[2]
 
   getConfigVersionForNamespace: (namespace) ->
     return if not atom.config.get('autocomplete-typo3-fluid.viewHelperNamespaces.' + namespace + '.enabled')

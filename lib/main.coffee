@@ -1,38 +1,30 @@
+{CompositeDisposable} = require 'atom'
+
+csc = require './config-schema-compiler'
+
+cc = require './completions-compiler'
+
+configSchema = require '../compiledConfigSchema.json'
+
 provider = require './provider'
 
-configSchema =
-  autoInsertMandatoryProperties:
-    type: 'boolean'
-    default: true
-  eddEndTagOnElementCompletion:
-    type: 'boolean'
-    default: true
-  viewHelperNamespaces:
-    title: 'ViewHelper Namespaces'
-    type: 'object'
-    properties: {}
-
-for namespace, versionObject of provider.completions.viewHelpers
-  do (namespace, versionObject) ->
-    configSchema.viewHelperNamespaces.properties[namespace] =
-      title: namespace
-      type: 'object'
-      properties:
-        enabled:
-          title: 'enabled'
-          type: 'boolean'
-          default: true
-        version:
-          title: 'Version'
-          type: 'string'
-          enum: []
-    Object.keys(versionObject).sort().forEach (version) ->
-      configSchema.viewHelperNamespaces.properties[namespace].properties.version.enum.push version
-      configSchema.viewHelperNamespaces.properties[namespace].properties.version.default = version
-
 module.exports =
-  config: configSchema
+  subscriptions: null
 
   activate: ->
+    @subscriptions = new CompositeDisposable
+    addCommands =
+      'autocomplete-typo3-fluid:compileConfigSchema': => @compileConfigSchema()
+      'autocomplete-typo3-fluid:compileCompletions': => @compileCompletions()
+    @subscriptions.add(atom.commands.add('atom-workspace',addCommands))
+
+  deactivate: ->
+    @subscriptions.dispose()
+
+  compileConfigSchema: -> csc.compileConfigSchema()
+
+  compileCompletions: -> cc.compileCompletions()
+
+  config: configSchema
 
   getProvider: -> provider

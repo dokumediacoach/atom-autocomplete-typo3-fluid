@@ -19,9 +19,9 @@
     }
   },
   "meta": {
-    "ns": "TYPO3\\CMS\\Fluid\\ViewHelpers",
-    "xmlnsPrefix": "f",
+    "namespace": "TYPO3\\CMS\\Fluid\\ViewHelpers",
     "version": "8LTS",
+    "xmlnsPrefix": "f",
     "xmlns": "http:\/\/typo3.org\/ns\/TYPO3\/CMS\/Fluid\/ViewHelpers"
   }
 }
