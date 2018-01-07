@@ -23,7 +23,7 @@ tagViewHelperSelfCloseStartPattern = /<([a-zA-Z][.a-zA-Z0-9]*:[a-zA-Z][.a-zA-Z0-
 # @getClosingTagCompletion
 tagCloseStartPattern = /<\/([a-zA-Z][.a-zA-Z0-9]*):(?:[a-zA-Z][.a-zA-Z0-9]*)?$/
 
-# @getViewHelperNamespaceFromNsPrefix Patterns:
+# @getViewHelperNamespaceFromNamespacePrefix Patterns:
 xmlNamespacePattern = /xmlns:([_a-zA-Z][-._a-zA-Z0-9]*)=(?:"([^"]+)"|\'([^\']+)\')/
 inlineNamespacePattern = /{namespace\s+([_a-zA-Z][-._a-zA-Z0-9]*)=([^}\s]+)\s*}/
 
@@ -115,16 +115,16 @@ module.exports =
   getClosingTagCompletion: ({prefix, scopeDescriptor, bufferPosition, editor}) ->
     lineStartText = editor.getTextInRange [[bufferPosition.row, 0], bufferPosition]
     return [] if not tagCloseStartPattern.test lineStartText
-    nsPrefixMatches = tagCloseStartPattern.exec lineStartText
-    parent = @getParentElement nsPrefixMatches[1], bufferPosition, editor
+    namespacePrefixMatches = tagCloseStartPattern.exec lineStartText
+    parent = @getParentElement namespacePrefixMatches[1], bufferPosition, editor
     return [] if not parent?
-    [@buildClosingTagCompletion nsPrefixMatches[1], parent]
+    [@buildClosingTagCompletion namespacePrefixMatches[1], parent]
 
-  buildClosingTagCompletion: (nsPrefix, parent) ->
+  buildClosingTagCompletion: (namespacePrefix, parent) ->
     text: "#{parent}>"
-    displayText: "#{nsPrefix}:#{parent} end tag"
+    displayText: "#{namespacePrefix}:#{parent} end tag"
     type: 'function'
-    description: "close #{nsPrefix}:#{parent} ViewHelper"
+    description: "close #{namespacePrefix}:#{parent} ViewHelper"
     characterMatchIndices: [0..parent.length-1]
 
   getSelfClosingTagCompletion: (elementName, bufferPosition, editor) ->
@@ -156,6 +156,7 @@ module.exports =
     return [] if not viewHelperNameStart?
     namespacePrefix = viewHelperNameStart[1]
     namespace = @getViewHelperNamespaceFromNamespacePrefix namespacePrefix, bufferPosition, editor
+    console.log namespace
     return [] if not namespace? or not @completions.namespaces?[namespace]?.viewHelpers?
     if tagOrInline is 'tag' and @completions.namespaces[namespace].elementRules?
       parent = @getParentElement namespacePrefix, bufferPosition, editor
@@ -208,13 +209,13 @@ module.exports =
         returnViewHelpers[name] = @completions.namespaces[namespace].viewHelpers.global[name]
     returnViewHelpers
 
-  getParentElement: (nsPrefix, bufferPosition, editor) ->
+  getParentElement: (namespacePrefix, bufferPosition, editor) ->
     scopeDescriptor = editor.scopeDescriptorForBufferPosition(bufferPosition)
     scopesArray = scopeDescriptor.getScopesArray()
     for scope in scopesArray
       if elementScopePattern.test scope
         elementMatches = elementScopePattern.exec scope
-        if elementMatches[1] is nsPrefix
+        if elementMatches[1] is namespacePrefix
           element = elementMatches[2]
         continue
       if scope is tagContentScope and element?
@@ -226,8 +227,8 @@ module.exports =
     infoPattern = if isTag then tagViewHelperInfoPattern else inlineViewHelperInfoPattern
     propPattern = if isTag then tagViewHelperInfoPropertiesMatchPattern else inlineViewHelperInfoPropertiesMatchPattern
     viewHelperInfo = {}
-    viewHelperText.replace infoPattern, (all, nsPrefix, name, properties) ->
-      viewHelperInfo.namespacePrefix = nsPrefix
+    viewHelperText.replace infoPattern, (all, namespacePrefix, name, properties) ->
+      viewHelperInfo.namespacePrefix = namespacePrefix
       viewHelperInfo.name = name
       if properties
         viewHelperInfo.properties = properties.match propPattern
@@ -236,15 +237,15 @@ module.exports =
     viewHelperProperties = @completions.namespaces[namespace].viewHelperProperties?[viewHelperInfo.name]
     return [] if not viewHelperProperties?
     completions = []
-    viewHelperName = viewHelperInfo.nsPrefix + ':' + viewHelperInfo.name
+    viewHelperName = viewHelperInfo.namespacePrefix + ':' + viewHelperInfo.name
     for name, object of viewHelperProperties when not viewHelperInfo.properties? or viewHelperInfo.properties.indexOf(name) is -1
       completions.push @buildViewHelperPropertyCompletion tagOrInline, name, viewHelperName, object
     completions
 
   buildViewHelperCompletion: (tagOrInline, namespacePrefix, namespace, name, viewHelperObject) ->
-    snippet = viewHelperObject.snippet[tagOrInline]
-    if tagOrInline is 'tag' and viewHelperObject.snippet.hasOwnProperty endTagEnd
-      snippet += "</#{namespacePrefix}:#{viewHelperObject.snippet.endTagEnd}"
+    snippet = viewHelperObject.snippets[tagOrInline]
+    if tagOrInline is 'tag' and viewHelperObject.snippets.hasOwnProperty 'endTagEnd'
+      snippet += "</#{namespacePrefix}:#{viewHelperObject.snippets.endTagEnd}"
     completion =
       snippet: snippet
       displayText: "#{namespacePrefix}:#{name}"
@@ -254,7 +255,7 @@ module.exports =
       characterMatchIndices: viewHelperObject.characterMatchIndices
 
   buildViewHelperPropertyCompletion: (tagOrInline, name, viewHelperName, viewHelperPropertyObject) ->
-    snippet: viewHelperPropertyObject.snippet[tagOrInline]
+    snippet: viewHelperPropertyObject.snippets[tagOrInline]
     displayText: name
     type: 'attribute'
     rightLabel: "#{viewHelperName} property"
@@ -273,7 +274,7 @@ module.exports =
         xmlNamespaceMatches = xmlNamespacePattern.exec lineText
         if xmlNamespaceMatches[1] is namespacePrefix
           xmlns = xmlNamespaceMatches[2] ? xmlNamespaceMatches[3]
-          return @completions.nsMap?[xmlns]
+          return @completions.xmlnsMap?[xmlns]
         continue
       if inlineNamespacePattern.test lineText
         inlineNamespaceMatches = inlineNamespacePattern.exec lineText
