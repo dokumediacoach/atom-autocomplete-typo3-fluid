@@ -2,6 +2,7 @@
   "name": "autocomplete-typo3-fluid",
   "version": "0.2.0",
   "description": "Autocompletions for TYPO3 Fluid ViewHelpers",
+  "activationHooks": ["language-typo3-fluid:grammar-used"],
   "main": "./lib/main",
   "license": "MIT",
   "repository": "https://github.com/dokumediacoach/atom-autocomplete-typo3-fluid",
