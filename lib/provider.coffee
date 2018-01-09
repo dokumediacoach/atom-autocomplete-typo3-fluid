@@ -12,7 +12,7 @@ inlineViewHelperInfoPropertiesMatchPattern = /[a-zA-Z][.a-zA-Z0-9]*(?=:)/g
 inlineViewHelperNameStartPattern = /[^(,]?\s*([a-zA-Z][.a-zA-Z0-9]*):(?:[a-zA-Z][.a-zA-Z0-9]*)?$/
 
 # @getTagViewHelperCompletions Patterns:
-tagViewHelperPropertyStartPattern = /<[a-zA-Z][.a-zA-Z0-9]*:[a-zA-Z][.a-zA-Z0-9]*(?:\s+[a-zA-Z][.a-zA-Z0-9]*=(?:"[^"]*"|\'[^\']\'))*\s+(?:[a-zA-Z][.a-zA-Z0-9]*)?$/
+tagViewHelperPropertyStartPattern = /<[a-zA-Z][.a-zA-Z0-9]*:[a-zA-Z][.a-zA-Z0-9]*(?:\s+[a-zA-Z][.a-zA-Z0-9]*=(?:"[^"]*"|\'[^\']*\'))*\s+(?:[a-zA-Z][.a-zA-Z0-9]*)?$/
 tagViewHelperStartPattern = /<[a-zA-Z][.a-zA-Z0-9]*:[a-zA-Z][.a-zA-Z0-9]*\s+[^>]*$/
 tagViewHelperEndPattern = /^[^>]*>$/
 tagViewHelperInfoPattern =/^<([a-zA-Z][.a-zA-Z0-9]*):([a-zA-Z][.a-zA-Z0-9]*)([^>]*)>/g
@@ -39,6 +39,10 @@ innermostInlineNotationPattern = /{([^{}]*)}/g
 # @resolveRuleViewHelperArray Pattern:
 ruleViewHelperNamePattern = /^<(g|l)>([a-zA-Z][.a-zA-Z0-9]*)$/
 
+# @getHtmlTagCompletion Patterns:
+htmlTagAttributeValueStartPattern = /^<html(?:\s+[_a-zA-Z][-_.a-zA-Z0-9:]*=(?:"[^"]*"|\'[^\']*\'))*\s+([_a-zA-Z][-_.a-zA-Z0-9:]*)=(?:"[^"]*|\'[^\']*)$/
+htmlTagAttributeStartPattern = /^<html(?:\s+[_a-zA-Z][-_.a-zA-Z0-9:]*=(?:"[^"]*"|\'[^\']\'))*\s+(?:[_a-zA-Z][-_.a-zA-Z0-9:]*)?$/
+
 ## Scopes
 
 inlineNotationScope = 'meta.inline-notation.typo3-fluid'
@@ -48,6 +52,8 @@ inlineViewHelperScope = 'meta.inline.view-helper.typo3-fluid'
 tagAttributesScope = 'meta.tag.start.attributes.typo3-fluid'
 tagStartScope = 'meta.tag.start.typo3-fluid'
 tagContentScope = 'meta.tag.content.typo3-fluid'
+
+htmlTagScope = 'meta.tag.structure.html.html'
 
 ## Completion Suggestions
 
@@ -71,6 +77,8 @@ module.exports =
       @getTagViewHelperCompletions request
     else if @hasScope tagContentScope, request.scopeDescriptor
       @getClosingTagCompletion request
+    else if @hasScope htmlTagScope, request.scopeDescriptor
+      @getHtmlTagCompletions request
     else
       []
 
@@ -288,6 +296,40 @@ module.exports =
     while innermostInlineNotationPattern.test string
       string = string.replace innermostInlineNotationPattern, '#r#'
     string
+
+  getHtmlTagCompletions: ({prefix, scopeDescriptor, bufferPosition, editor}) ->
+    htmlTagScopeRange = @getRangeForScopeAtPosition htmlTagScope, bufferPosition, editor
+    return if not htmlTagScopeRange?
+    htmlTagStartText = editor.getTextInRange [htmlTagScopeRange.start, bufferPosition]
+    if htmlTagAttributeValueStartPattern.test htmlTagStartText
+      patternMatches = htmlTagAttributeValueStartPattern.exec htmlTagStartText
+      @getHtmlAttributeValueCompletions patternMatches[1]
+    else if htmlTagAttributeStartPattern.test htmlTagStartText
+      for attributeName, attributeObject of @completions.htmlAttributes
+        @buildHtmlAttributeCompletions attributeName, attributeObject
+
+  getHtmlAttributeValueCompletions: (attributeName) ->
+    return [] if not @completions.htmlAttributes.hasOwnProperty attributeName
+    for value in @completions.htmlAttributes[attributeName].options
+      @buildHtmlAttributeValueCompletion value
+
+  buildHtmlAttributeValueCompletion: (value, description) ->
+    text: value
+    type: 'value'
+    characterMatchIndices: [0..value.length-1]
+
+  buildHtmlAttributeCompletions: (attributeName, attributeObject) ->
+    snippet = "#{attributeName}=\""
+    if attributeObject.options?.length is 1
+      snippet += "#{attributeObject.options[0]}\"$1"
+    else
+      snippet += '$1"$0'
+    completion =
+      snippet: snippet
+      displayText: attributeName
+      type: 'attribute'
+      description: attributeObject.description
+      characterMatchIndices: [0..attributeName.length-1]
 
   ## Some more general helper methods and therefore better commented
 

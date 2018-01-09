@@ -22,9 +22,9 @@ module.exports =
 
     completions =
       htmlAttributes:
-        "data-namespace-typo3-fluid":
-          description: "Omit TYPO3 Fluid Namespace(s) in HTML output"
-          options: [true]
+        'data-namespace-typo3-fluid':
+          description: 'Omit TYPO3 Fluid Namespace(s) in HTML output'
+          options: ['true']
       xmlnsMap: {}
       namespaces: {}
 
@@ -38,6 +38,8 @@ module.exports =
           if fo.meta.xmlnsPrefix and fo.meta.xmlns
             if not completions.htmlAttributes.hasOwnProperty "xmlns:#{fo.meta.xmlnsPrefix}"
               completions.htmlAttributes["xmlns:#{fo.meta.xmlnsPrefix}"] = new KeyArrayValueObject
+            if not completions.htmlAttributes["xmlns:#{fo.meta.xmlnsPrefix}"].hasOwnProperty 'description'
+              completions.htmlAttributes["xmlns:#{fo.meta.xmlnsPrefix}"].description = 'XML Namespace declaration for Fluid ViewHelpers'
             completions.htmlAttributes["xmlns:#{fo.meta.xmlnsPrefix}"].mergeArrayUniqueInValueAtKey fo.meta.xmlns, 'options'
           if fo.meta.xmlns and fo.meta.namespace
             completions.xmlnsMap[fo.meta.xmlns] = fo.meta.namespace
