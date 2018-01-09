@@ -156,7 +156,6 @@ module.exports =
     return [] if not viewHelperNameStart?
     namespacePrefix = viewHelperNameStart[1]
     namespace = @getViewHelperNamespaceFromNamespacePrefix namespacePrefix, bufferPosition, editor
-    console.log namespace
     return [] if not namespace? or not @completions.namespaces?[namespace]?.viewHelpers?
     if tagOrInline is 'tag' and @completions.namespaces[namespace].elementRules?
       parent = @getParentElement namespacePrefix, bufferPosition, editor

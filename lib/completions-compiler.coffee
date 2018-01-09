@@ -1,3 +1,21 @@
+class KeyArrayObject
+  mergeArrayUniqueInKey: (array, key) ->
+    if not Array.isArray array
+      if Object.prototype.toString.call(String(array)) isnt '[object String]'
+        console.log "could not merge array unique in key '#{key}' - parameter error #{Object.prototype.toString.call String(array)}"
+        return
+      array = [String(array)]
+    if not @hasOwnProperty key
+      @[key] = []
+    else if not Array.isArray @[key]
+      if Object.prototype.toString.call(String(@[key])) isnt '[object String]'
+        console.log "could not merge array unique in key '#{key}' - object value error #{Object.prototype.toString.call String(@[key])}"
+        return
+      @[key] = [String(@[key])]
+    array.forEach (value) =>
+      if @[key].indexOf(value) is -1
+        @[key].push value
+
 module.exports =
 
   compileCompletions: ->
@@ -18,24 +36,19 @@ module.exports =
             atom.config.get("autocomplete-typo3-fluid.viewHelperNamespaces.#{fo.meta.namespace}.enabled") and
             atom.config.get("autocomplete-typo3-fluid.viewHelperNamespaces.#{fo.meta.namespace}.version") is fo.meta.version
           if fo.meta.xmlnsPrefix and fo.meta.xmlns
-            cHtmlXmlnsAttributeOptions = completions.htmlAttributes["xmlns:#{fo.meta.xmlnsPrefix}"]?.options
-            if cHtmlXmlnsAttributeOptions?
-              completions.htmlAttributes["xmlns:#{fo.meta.xmlnsPrefix}"].options = @mergeArraysUnique cHtmlXmlnsAttributeOptions, [fo.meta.xmlns]
-            else
-              completions.htmlAttributes["xmlns:#{fo.meta.xmlnsPrefix}"] =
-                options: [fo.meta.xmlns]
+            if not completions.htmlAttributes.hasOwnProperty "xmlns:#{fo.meta.xmlnsPrefix}"
+              completions.htmlAttributes["xmlns:#{fo.meta.xmlnsPrefix}"] = new KeyArrayObject
+            completions.htmlAttributes["xmlns:#{fo.meta.xmlnsPrefix}"].mergeArrayUniqueInKey fo.meta.xmlns, 'options'
           if fo.meta.xmlns and fo.meta.namespace
             completions.xmlnsMap[fo.meta.xmlns] = fo.meta.namespace
-          if not completions.namespaces[fo.meta.namespace]?
+          if not completions.namespaces.hasOwnProperty fo.meta.namespace
             completions.namespaces[fo.meta.namespace] =
               viewHelpers:
                 global: {}
-          if fo.viewHelpers?
+          if fo.hasOwnProperty 'viewHelpers'
             @mergeViewHelper completions.namespaces[fo.meta.namespace].viewHelpers.global, name, object for name, object of fo.viewHelpers
-          if fo.elementRules?
-            if not completions.namespaces[fo.meta.namespace].elementRules?
-              completions.namespaces[fo.meta.namespace].elementRules = {}
-            @mergeElementRules fo.elementRules, completions.namespaces[fo.meta.namespace].elementRules
+          if fo.hasOwnProperty 'elementRules'
+            @mergeElementRules completions.namespaces[fo.meta.namespace], fo.elementRules
 
     @expandElementRules completions
 
@@ -45,69 +58,54 @@ module.exports =
       if(err)
         return console.log(err)
 
-  mergeViewHelper: (completionsViewHelpers, viewHelperName, viewHelperObject) ->
-    if not completionsViewHelpers[viewHelperName]?
-      completionsViewHelpers[viewHelperName] = {}
-    if viewHelperObject.description
-      completionsViewHelpers[viewHelperName].description = viewHelperObject.description
-    if viewHelperObject.mandatoryProperties
-      cMandatoryProperties = completionsViewHelpers[viewHelperName].mandatoryProperties
-      if cMandatoryProperties?
-        completionsViewHelpers[viewHelperName].mandatoryProperties = mergeArraysUnique cMandatoryProperties, viewHelperObject.mandatoryProperties
-      else
-        completionsViewHelpers[viewHelperName].mandatoryProperties = viewHelperObject.mandatoryProperties
-    if viewHelperObject.properties?
-      if not completionsViewHelpers[viewHelperName].properties?
-        completionsViewHelpers[viewHelperName].properties = {}
+  mergeViewHelper: (completionsViewHelpersObject, viewHelperName, viewHelperObject) ->
+    if not completionsViewHelpersObject.hasOwnProperty viewHelperName
+      completionsViewHelpersObject[viewHelperName] = new KeyArrayObject
+    if viewHelperObject.hasOwnProperty 'description'
+      completionsViewHelpersObject[viewHelperName].description = viewHelperObject.description
+    if viewHelperObject.hasOwnProperty 'mandatoryProperties'
+      completionsViewHelpersObject[viewHelperName].mergeArrayUniqueInKey viewHelperObject.mandatoryProperties, 'mandatoryProperties'
+    if viewHelperObject.hasOwnProperty 'properties'
+      if not completionsViewHelpersObject[viewHelperName].hasOwnProperty 'properties'
+        completionsViewHelpersObject[viewHelperName].properties = {}
       for name, object of viewHelperObject.properties
-        if not completionsViewHelpers[viewHelperName].properties[name]?
-          completionsViewHelpers[viewHelperName].properties[name] = {}
-        if object.description?
-          completionsViewHelpers[viewHelperName].properties[name].description = object.description
+        if not completionsViewHelpersObject[viewHelperName].properties.hasOwnProperty name
+          completionsViewHelpersObject[viewHelperName].properties[name] = {}
+        if object.hasOwnProperty 'description'
+          completionsViewHelpersObject[viewHelperName].properties[name].description = object.description
 
-  mergeElementRules: (elementRules, completionsElementRules) ->
-    if elementRules.localViewHelpers?
-      cLocalViewHelpers = completionsElementRules.localViewHelpers
-      if cLocalViewHelpers?
-        completionsElementRules.localViewHelpers = @mergeArraysUnique cLocalViewHelpers, elementRules.localViewHelpers
-      else
-        completionsElementRules.localViewHelpers = elementRules.localViewHelpers
-    if elementRules.parent?
-      if not completionsElementRules.parent?
-        completionsElementRules.parent = {}
+  mergeElementRules: (completionsNamespaceObject, elementRules) ->
+    if not completionsNamespaceObject.hasOwnProperty 'elementRules'
+      completionsNamespaceObject.elementRules = new KeyArrayObject
+    if elementRules.hasOwnProperty 'localViewHelpers'
+      completionsNamespaceObject.elementRules.mergeArrayUniqueInKey elementRules.localViewHelpers, 'localViewHelpers'
+    if elementRules.hasOwnProperty 'parent'
+      if not completionsNamespaceObject.elementRules.hasOwnProperty 'parent'
+        completionsNamespaceObject.elementRules.parent = {}
       for name, object of elementRules.parent
-        if not completionsElementRules.parent[name]?
-          completionsElementRules.parent[name] = {}
-        if object.firstChild?
-          cFirstChildren = completionsElementRules.parent[name].firstChild
-          if cFirstChildren?
-            completionsElementRules.parent[name].firstChild = @mergeArraysUnique cFirstChildren, object.firstChild
-          else
-            completionsElementRules.parent[name].firstChild = object.firstChild
-        if object.after?
-          if not completionsElementRules.parent[name].after
-            completionsElementRules.parent[name].after = {}
-          for e, array of object.after
-            cFollower = completionsElementRules.parent[name].after[e]
-            if cFollower?
-              completionsElementRules.parent[name].after[e] = @mergeArraysUnique cFollower, array
-            else
-              completionsElementRules.parent[name].after[e] = array
+        if not completionsNamespaceObject.elementRules.parent.hasOwnProperty name
+          completionsNamespaceObject.elementRules.parent[name] = new KeyArrayObject
+        if object.hasOwnProperty 'firstChild'
+          completionsNamespaceObject.elementRules.parent[name].mergeArrayUniqueInKey object.firstChild, 'firstChild'
+        if object.hasOwnProperty 'after'
+          if not completionsNamespaceObject.elementRules.parent[name].hasOwnProperty 'after'
+            completionsNamespaceObject.elementRules.parent[name].after = new KeyArrayObject
+          for element, array of object.after
+            completionsNamespaceObject.elementRules.parent[name].after.mergeArrayUniqueInKey array, element
 
   expandElementRules: (completions) ->
     for namespace, namespaceObject of completions.namespaces
-      namespaceElementRules = namespaceObject.elementRules
-      if namespaceElementRules?
-        if namespaceElementRules.localViewHelpers?
+      if namespaceObject.hasOwnProperty 'elementRules'
+        if namespaceObject.elementRules.hasOwnProperty 'localViewHelpers'
           globalElements = {}
           for name, object of completions.namespaces[namespace].viewHelpers.global
-            if namespaceElementRules.localViewHelpers.indexOf(name) is -1
+            if namespaceObject.elementRules.localViewHelpers.indexOf(name) is -1
               globalElements[name] = true
-        if namespaceElementRules.parent? and globalElements?
-          for name, parentObject of namespaceElementRules.parent
-            if parentObject.firstChild?
+        if namespaceObject.elementRules.hasOwnProperty 'parent' and globalElements?
+          for name, parentObject of namespaceObject.elementRules.parent
+            if parentObject.hasOwnProperty 'firstChild'
               parentObject.firstChild = @mergeGlobalInArray parentObject.firstChild, globalElements
-            if parentObject.after?
+            if parentObject.hasOwnProperty 'after'
               for previous, namesArray of parentObject.after
                 parentObject.after[previous] = @mergeGlobalInArray namesArray, globalElements
 
@@ -123,13 +121,6 @@ module.exports =
         returnArray.push "<l>#{name}"
     returnArray
 
-  mergeArraysUnique: (array1, array2) ->
-    mergedArray = []
-    array1.concat(array2).forEach (item) ->
-      if mergedArray.indexOf(item) is -1
-        mergedArray.push item
-    return mergedArray
-
   optimizeCompletions: (completions) ->
     autoInsertMandatoryProperties = atom.config.get('autocomplete-typo3-fluid.autoInsertMandatoryProperties')
     eddEndTagOnElementCompletion = atom.config.get('autocomplete-typo3-fluid.eddEndTagOnElementCompletion')
@@ -137,20 +128,20 @@ module.exports =
     for namespace, namespaceObject of completions.namespaces
       namespaceObject.viewHelperProperties = {}
       for viewHelperName, viewHelperObject of namespaceObject.viewHelpers.global
-        if viewHelperObject.properties?
+        if viewHelperObject.hasOwnProperty 'properties'
           propertiesCopy = JSON.parse(JSON.stringify(viewHelperObject.properties))
           namespaceObject.viewHelperProperties[viewHelperName] = propertiesCopy
           delete viewHelperObject.properties
-        mandatoryProperties = viewHelperObject.mandatoryProperties
-        if autoInsertMandatoryProperties and mandatoryProperties?
+        hasMandatoryProperties = viewHelperObject.hasOwnProperty 'mandatoryProperties'
+        if autoInsertMandatoryProperties and hasMandatoryProperties
           tagProperties = ''
           inlineProperties = ''
-          for property, i in mandatoryProperties
+          for property, i in viewHelperObject.mandatoryProperties
             tagProperties += " #{property}=\"$#{i + 1}\""
             if i
               inlineProperties += ', '
             inlineProperties += "#{property}: $#{i + 1}"
-          tagProperties += "$#{mandatoryProperties.length + 1}"
+          tagProperties += "$#{viewHelperObject.mandatoryProperties.length + 1}"
         else
           tagProperties = '$1'
           inlineProperties = '$1'
@@ -158,11 +149,11 @@ module.exports =
           tag: "#{viewHelperName}#{tagProperties}>$"
           inline: "#{viewHelperName}(#{inlineProperties})$0"
         if eddEndTagOnElementCompletion
-          viewHelperObject.snippets.tag += if mandatoryProperties? then "#{(mandatoryProperties.length + 2)}" else '2'
+          viewHelperObject.snippets.tag += if hasMandatoryProperties then "#{(viewHelperObject.mandatoryProperties.length + 2)}" else '2'
           viewHelperObject.snippets.endTagEnd = "#{viewHelperName}>$0"
         else
           viewHelperObject.snippets.tag += '0'
-        if mandatoryProperties?
+        if hasMandatoryProperties
           delete viewHelperObject.mandatoryProperties
         if not viewHelperObject.description
           viewHelperObject.description = "ViewHelper #{viewHelperName}"
@@ -173,19 +164,18 @@ module.exports =
           propertyObject.snippets =
             tag: "#{propertyName}=\"$1\"$0"
             inline: "#{propertyName}: $1"
-          if not propertyObject.description
+          if not propertyObject.hasOwnProperty('description') or not propertyObject.description
             propertyObject.description = "ViewHelper property #{propertyName}"
           propertyObject.characterMatchIndices = @getCharacterMatchIndices propertyName, nonWordCharacters
 
-      namespaceElementRules = namespaceObject.elementRules
-      if namespaceElementRules?.localViewHelpers?
+      if namespaceObject.hasOwnProperty('elementRules') and namespaceObject.elementRules.hasOwnProperty('localViewHelpers')
         namespaceObject.viewHelpers.local = {}
-        for localName in namespaceElementRules.localViewHelpers
-          if namespaceObject.viewHelpers.global[localName]?
+        for localName in namespaceObject.elementRules.localViewHelpers
+          if namespaceObject.viewHelpers.global.hasOwnProperty localName
             globalCopy = JSON.parse(JSON.stringify(namespaceObject.viewHelpers.global[localName]))
             namespaceObject.viewHelpers.local[localName] = globalCopy
             delete namespaceObject.viewHelpers.global[localName]
-        delete namespaceElementRules.localViewHelpers
+        delete namespaceObject.elementRules.localViewHelpers
 
   getCharacterMatchIndices: (completionName, nonWordCharacters) ->
     returnArray = []
