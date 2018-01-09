@@ -1,15 +1,15 @@
-class KeyArrayObject
-  mergeArrayUniqueInKey: (array, key) ->
+class KeyArrayValueObject
+  mergeArrayUniqueInValueAtKey: (array, key) ->
     if not Array.isArray array
       if Object.prototype.toString.call(String(array)) isnt '[object String]'
-        console.log "could not merge array unique in key '#{key}' - parameter error #{Object.prototype.toString.call String(array)}"
+        console.log "could not merge array unique in value at key '#{key}' - parameter error #{Object.prototype.toString.call String(array)}"
         return
       array = [String(array)]
     if not @hasOwnProperty key
       @[key] = []
     else if not Array.isArray @[key]
       if Object.prototype.toString.call(String(@[key])) isnt '[object String]'
-        console.log "could not merge array unique in key '#{key}' - object value error #{Object.prototype.toString.call String(@[key])}"
+        console.log "could not merge array unique in value at key '#{key}' - object value error #{Object.prototype.toString.call String(@[key])}"
         return
       @[key] = [String(@[key])]
     array.forEach (value) =>
@@ -37,8 +37,8 @@ module.exports =
             atom.config.get("autocomplete-typo3-fluid.viewHelperNamespaces.#{fo.meta.namespace}.version") is fo.meta.version
           if fo.meta.xmlnsPrefix and fo.meta.xmlns
             if not completions.htmlAttributes.hasOwnProperty "xmlns:#{fo.meta.xmlnsPrefix}"
-              completions.htmlAttributes["xmlns:#{fo.meta.xmlnsPrefix}"] = new KeyArrayObject
-            completions.htmlAttributes["xmlns:#{fo.meta.xmlnsPrefix}"].mergeArrayUniqueInKey fo.meta.xmlns, 'options'
+              completions.htmlAttributes["xmlns:#{fo.meta.xmlnsPrefix}"] = new KeyArrayValueObject
+            completions.htmlAttributes["xmlns:#{fo.meta.xmlnsPrefix}"].mergeArrayUniqueInValueAtKey fo.meta.xmlns, 'options'
           if fo.meta.xmlns and fo.meta.namespace
             completions.xmlnsMap[fo.meta.xmlns] = fo.meta.namespace
           if not completions.namespaces.hasOwnProperty fo.meta.namespace
@@ -60,11 +60,11 @@ module.exports =
 
   mergeViewHelper: (completionsViewHelpersObject, viewHelperName, viewHelperObject) ->
     if not completionsViewHelpersObject.hasOwnProperty viewHelperName
-      completionsViewHelpersObject[viewHelperName] = new KeyArrayObject
+      completionsViewHelpersObject[viewHelperName] = new KeyArrayValueObject
     if viewHelperObject.hasOwnProperty 'description'
       completionsViewHelpersObject[viewHelperName].description = viewHelperObject.description
     if viewHelperObject.hasOwnProperty 'mandatoryProperties'
-      completionsViewHelpersObject[viewHelperName].mergeArrayUniqueInKey viewHelperObject.mandatoryProperties, 'mandatoryProperties'
+      completionsViewHelpersObject[viewHelperName].mergeArrayUniqueInValueAtKey viewHelperObject.mandatoryProperties, 'mandatoryProperties'
     if viewHelperObject.hasOwnProperty 'properties'
       if not completionsViewHelpersObject[viewHelperName].hasOwnProperty 'properties'
         completionsViewHelpersObject[viewHelperName].properties = {}
@@ -76,22 +76,22 @@ module.exports =
 
   mergeElementRules: (completionsNamespaceObject, elementRules) ->
     if not completionsNamespaceObject.hasOwnProperty 'elementRules'
-      completionsNamespaceObject.elementRules = new KeyArrayObject
+      completionsNamespaceObject.elementRules = new KeyArrayValueObject
     if elementRules.hasOwnProperty 'localViewHelpers'
-      completionsNamespaceObject.elementRules.mergeArrayUniqueInKey elementRules.localViewHelpers, 'localViewHelpers'
+      completionsNamespaceObject.elementRules.mergeArrayUniqueInValueAtKey elementRules.localViewHelpers, 'localViewHelpers'
     if elementRules.hasOwnProperty 'parent'
       if not completionsNamespaceObject.elementRules.hasOwnProperty 'parent'
         completionsNamespaceObject.elementRules.parent = {}
       for name, object of elementRules.parent
         if not completionsNamespaceObject.elementRules.parent.hasOwnProperty name
-          completionsNamespaceObject.elementRules.parent[name] = new KeyArrayObject
+          completionsNamespaceObject.elementRules.parent[name] = new KeyArrayValueObject
         if object.hasOwnProperty 'firstChild'
-          completionsNamespaceObject.elementRules.parent[name].mergeArrayUniqueInKey object.firstChild, 'firstChild'
+          completionsNamespaceObject.elementRules.parent[name].mergeArrayUniqueInValueAtKey object.firstChild, 'firstChild'
         if object.hasOwnProperty 'after'
           if not completionsNamespaceObject.elementRules.parent[name].hasOwnProperty 'after'
-            completionsNamespaceObject.elementRules.parent[name].after = new KeyArrayObject
+            completionsNamespaceObject.elementRules.parent[name].after = new KeyArrayValueObject
           for element, array of object.after
-            completionsNamespaceObject.elementRules.parent[name].after.mergeArrayUniqueInKey array, element
+            completionsNamespaceObject.elementRules.parent[name].after.mergeArrayUniqueInValueAtKey array, element
 
   expandElementRules: (completions) ->
     for namespace, namespaceObject of completions.namespaces
