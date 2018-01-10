@@ -1,5 +1,4 @@
-COMPLETIONS = require '../compiledCompletions.json'
-
+CC = require './completions-collector'
 
 ## Regex Patterns
 
@@ -55,13 +54,13 @@ tagContentScope = 'meta.tag.content.typo3-fluid'
 
 htmlTagScope = 'meta.tag.structure.html.html'
 
-## Completion Suggestions
+## Completions provider to export
 
-module.exports =
+provider =
+  completionsCollector: CC
   selector: '.text.html'
   disableForSelector: '.text.html .comment'
   filterSuggestions: true
-  completions: COMPLETIONS
 
   # include prior to default provider (inclusionPriority of 0).
   inclusionPriority: 1
@@ -450,3 +449,8 @@ module.exports =
     position.row = nextRow
     position.column = 0
     position
+
+Object.defineProperty provider, 'completions',
+    get: -> @completionsCollector.getCompletions()
+
+module.exports = provider

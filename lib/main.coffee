@@ -1,30 +1,27 @@
 {CompositeDisposable} = require 'atom'
 
-csc = require './config-schema-compiler'
+Provider = require './provider'
 
-cc = require './completions-compiler'
-
-configSchema = require '../compiledConfigSchema.json'
-
-provider = require './provider'
-
-module.exports =
+main =
   subscriptions: null
 
   activate: ->
     @subscriptions = new CompositeDisposable
     addCommands =
-      'autocomplete-typo3-fluid:compileConfigSchema': => @compileConfigSchema()
-      'autocomplete-typo3-fluid:compileCompletions': => @compileCompletions()
+      'autocomplete-typo3-fluid:buildConfigSchema': => @buildConfigSchema()
+      'autocomplete-typo3-fluid:buildCompletions': => @buildCompletions()
     @subscriptions.add(atom.commands.add('atom-workspace',addCommands))
 
   deactivate: ->
     @subscriptions.dispose()
 
-  compileConfigSchema: -> csc.compileConfigSchema()
+  buildConfigSchema: -> @getProvider().completionsCollector.buildConfigSchema()
 
-  compileCompletions: -> cc.compileCompletions()
+  buildCompletions: -> @getProvider().completionsCollector.buildCompletions()
 
-  config: configSchema
+  getProvider: -> Provider
 
-  getProvider: -> provider
+Object.defineProperty main, 'config',
+    get: -> @getProvider().completionsCollector.getConfigSchema()
+
+module.exports = main
