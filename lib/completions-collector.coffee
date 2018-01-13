@@ -54,9 +54,12 @@ module.exports =
 
 
   getCompletions: ->
-    if not @completions?
+    if @rebuildCompletions or not @completions?
       @buildCompletions()
+      @rebuildCompletions = false
     @completions
+
+  rebuildCompletions: true
 
   buildCompletions: ->
     @completions =
@@ -64,6 +67,7 @@ module.exports =
         'data-namespace-typo3-fluid':
           description: 'Omit TYPO3 Fluid Namespace(s) in HTML output'
           options: ['true']
+      inlineNamespaceDefinitions: {}
       xmlnsMap: {}
       namespaces: {}
 
@@ -72,12 +76,18 @@ module.exports =
       if fo.meta?.namespace and fo.meta?.version and
           atom.config.get("autocomplete-typo3-fluid.viewHelperNamespaces.#{fo.meta.namespace}.enabled") and
           atom.config.get("autocomplete-typo3-fluid.viewHelperNamespaces.#{fo.meta.namespace}.version") is fo.meta.version
-        if fo.meta.xmlnsPrefix and fo.meta.xmlns
-          if not @completions.htmlAttributes.hasOwnProperty "xmlns:#{fo.meta.xmlnsPrefix}"
-            @completions.htmlAttributes["xmlns:#{fo.meta.xmlnsPrefix}"] = {}
-          if not @completions.htmlAttributes["xmlns:#{fo.meta.xmlnsPrefix}"].hasOwnProperty 'description'
-            @completions.htmlAttributes["xmlns:#{fo.meta.xmlnsPrefix}"].description = 'XML Namespace declaration for Fluid ViewHelpers'
-          @mergeArrayUniqueInValueAtKey.call @completions.htmlAttributes["xmlns:#{fo.meta.xmlnsPrefix}"], fo.meta.xmlns, 'options'
+        if fo.meta.namespacePrefix and fo.meta.xmlns
+          if not @completions.htmlAttributes.hasOwnProperty "xmlns:#{fo.meta.namespacePrefix}"
+            @completions.htmlAttributes["xmlns:#{fo.meta.namespacePrefix}"] = {}
+          if not @completions.htmlAttributes["xmlns:#{fo.meta.namespacePrefix}"].hasOwnProperty 'description'
+            @completions.htmlAttributes["xmlns:#{fo.meta.namespacePrefix}"].description = 'XML Namespace declaration for Fluid ViewHelpers'
+          @mergeArrayUniqueInValueAtKey.call @completions.htmlAttributes["xmlns:#{fo.meta.namespacePrefix}"], fo.meta.xmlns, 'options'
+        if fo.meta.namespacePrefix and fo.meta.namespace
+          if not @completions.inlineNamespaceDefinitions.hasOwnProperty fo.meta.namespacePrefix
+            @completions.inlineNamespaceDefinitions[fo.meta.namespacePrefix] = {}
+          if not @completions.inlineNamespaceDefinitions[fo.meta.namespacePrefix].hasOwnProperty 'description'
+            @completions.inlineNamespaceDefinitions[fo.meta.namespacePrefix].description = 'Namespace declaration for Fluid ViewHelpers'
+          @mergeArrayUniqueInValueAtKey.call @completions.inlineNamespaceDefinitions[fo.meta.namespacePrefix], fo.meta.namespace, 'options'
         if fo.meta.xmlns and fo.meta.namespace
           @completions.xmlnsMap[fo.meta.xmlns] = fo.meta.namespace
         if not @completions.namespaces.hasOwnProperty fo.meta.namespace

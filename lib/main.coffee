@@ -7,17 +7,23 @@ main =
 
   activate: ->
     @subscriptions = new CompositeDisposable
-    addCommands =
-      'autocomplete-typo3-fluid:buildConfigSchema': => @buildConfigSchema()
-      'autocomplete-typo3-fluid:buildCompletions': => @buildCompletions()
-    @subscriptions.add(atom.commands.add('atom-workspace',addCommands))
+    @subscriptions.add atom.commands.add 'atom-workspace',
+      'autocomplete-typo3-fluid:rebuildConfigSchema': => @rebuildConfigSchema()
+      'autocomplete-typo3-fluid:rebuildCompletions': => @triggerRebuildCompletions()
+    onConfigChangeKeys = [
+      'autocomplete-typo3-fluid.autoInsertMandatoryProperties'
+      'autocomplete-typo3-fluid.eddEndTagOnElementCompletion'
+      'autocomplete-typo3-fluid.viewHelperNamespaces'
+    ]
+    for key in onConfigChangeKeys
+      @subscriptions.add atom.config.onDidChange key, => @triggerRebuildCompletions()
 
   deactivate: ->
     @subscriptions.dispose()
 
-  buildConfigSchema: -> @getProvider().completionsCollector.buildConfigSchema()
+  rebuildConfigSchema: -> @getProvider().completionsCollector.buildConfigSchema()
 
-  buildCompletions: -> @getProvider().completionsCollector.buildCompletions()
+  triggerRebuildCompletions: -> @getProvider().completionsCollector.rebuildCompletions = true
 
   getProvider: -> Provider
 

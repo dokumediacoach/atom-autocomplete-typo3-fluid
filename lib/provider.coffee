@@ -9,6 +9,11 @@ inlineViewHelperEndPattern = /^[^)]*\)/
 inlineViewHelperInfoPattern =/^([a-zA-Z][.a-zA-Z0-9]*):([a-zA-Z][.a-zA-Z0-9]*)\(([^)]*)/g
 inlineViewHelperInfoPropertiesMatchPattern = /[a-zA-Z][.a-zA-Z0-9]*(?=:)/g
 inlineViewHelperNameStartPattern = /[^(,]?\s*([a-zA-Z][.a-zA-Z0-9]*):(?:[a-zA-Z][.a-zA-Z0-9]*)?$/
+inlineNamespaceStartPattern = /{namespace\s+(?:[_a-zA-Z][-._a-zA-Z0-9]*=)?$/
+
+# @getInlineNamespaceCompletions Patterns:
+inlineNamespaceOptionsStartTestPattern = /\=$/
+inlineNamespaceOptionsPrefixMatchPattern = /{namespace\s+([_a-zA-Z][-._a-zA-Z0-9]*)=$/
 
 # @getTagViewHelperCompletions Patterns:
 tagViewHelperPropertyStartPattern = /<[a-zA-Z][.a-zA-Z0-9]*:[a-zA-Z][.a-zA-Z0-9]*(?:\s+[a-zA-Z][.a-zA-Z0-9]*=(?:"[^"]*"|\'[^\']*\'))*\s+(?:[a-zA-Z][.a-zA-Z0-9]*)?$/
@@ -70,16 +75,19 @@ provider =
   suggestionPriority: 2
 
   getSuggestions: (request) ->
-    if @hasScope inlineNotationScope, request.scopeDescriptor
-      @getInlineNotationCompletions request
-    else if @hasScope tagStartScope, request.scopeDescriptor
-      @getTagViewHelperCompletions request
-    else if @hasScope tagContentScope, request.scopeDescriptor
-      @getClosingTagCompletion request
-    else if @hasScope htmlTagScope, request.scopeDescriptor
-      @getHtmlTagCompletions request
-    else
-      []
+    new Promise (resolve) =>
+      if @hasScope inlineNotationScope, request.scopeDescriptor
+        suggestions = @getInlineNotationCompletions request
+      else if @hasScope tagStartScope, request.scopeDescriptor
+        suggestions = @getTagViewHelperCompletions request
+      else if @hasScope tagContentScope, request.scopeDescriptor
+        suggestions = @getClosingTagCompletion request
+      else if @hasScope htmlTagScope, request.scopeDescriptor
+        suggestions = @getHtmlTagCompletions request
+      else
+        suggestions = []
+      resolve(suggestions)
+
 
   getInlineNotationCompletions: ({prefix, scopeDescriptor, bufferPosition, editor}) ->
     vhScopeLevel = @getNestingLevelForScope inlineViewHelperScope, scopeDescriptor
@@ -102,6 +110,8 @@ provider =
         return @getViewHelperPropertyCompletions 'inline', viewHelperText, bufferPosition, editor
     inScopeRange = @getRangeForScopeAtPosition inlineNotationScope, bufferPosition, editor
     inStartText = editor.getTextInRange [inScopeRange.start, bufferPosition]
+    if inlineNamespaceStartPattern.test inStartText
+      return @getInlineNamespaceCompletions inStartText
     @getViewHelperCompletions 'inline', inStartText, bufferPosition, editor
 
   getTagViewHelperCompletions: ({prefix, scopeDescriptor, bufferPosition, editor, activatedManually}) ->
@@ -156,6 +166,35 @@ provider =
       deleteLength = elementMatches[1].length + 3
       textBuffer = editor.getBuffer()
       textBuffer.delete [triggerPosition, [triggerPosition.row, triggerPosition.column + deleteLength]]
+
+  getInlineNamespaceCompletions: (startText) ->
+    if inlineNamespaceOptionsStartTestPattern.test startText
+      patternMatches = inlineNamespaceOptionsPrefixMatchPattern.exec startText
+      return @getInlineNamespaceOptions patternMatches[1]
+    for namespacePrefix, object of @completions.inlineNamespaceDefinitions
+      @buildInlineNamespaceCompletion namespacePrefix, object
+
+  getInlineNamespaceOptions: (namespacePrefix) ->
+    return [] if not @completions.inlineNamespaceDefinitions.hasOwnProperty namespacePrefix
+    for value in @completions.inlineNamespaceDefinitions[namespacePrefix].options
+      @buildInlineNamespaceOptionCompletion value
+
+  buildInlineNamespaceOptionCompletion: (value) ->
+    text: value
+    type: 'value'
+
+  buildInlineNamespaceCompletion: (namespacePrefix, object) ->
+    snippet = "#{namespacePrefix}="
+    console.log object
+    if object.options?.length is 1
+      snippet += object.options[0].replace /\\/g, '\\\\'
+    snippet += '$1'
+    completion =
+      snippet: snippet
+      displayText: namespacePrefix
+      type: 'attribute'
+      description: object.description
+      characterMatchIndices: [0..namespacePrefix.length-1]
 
   getViewHelperCompletions: (tagOrInline, viewHelperStartText, bufferPosition, editor) ->
     startPattern = if tagOrInline is 'tag' then tagViewHelperNameStartPattern else inlineViewHelperNameStartPattern
@@ -305,19 +344,19 @@ provider =
       @getHtmlAttributeValueCompletions patternMatches[1]
     else if htmlTagAttributeStartPattern.test htmlTagStartText
       for attributeName, attributeObject of @completions.htmlAttributes
-        @buildHtmlAttributeCompletions attributeName, attributeObject
+        @buildHtmlAttributeCompletion attributeName, attributeObject
 
   getHtmlAttributeValueCompletions: (attributeName) ->
     return [] if not @completions.htmlAttributes.hasOwnProperty attributeName
     for value in @completions.htmlAttributes[attributeName].options
       @buildHtmlAttributeValueCompletion value
 
-  buildHtmlAttributeValueCompletion: (value, description) ->
+  buildHtmlAttributeValueCompletion: (value) ->
     text: value
     type: 'value'
     characterMatchIndices: [0..value.length-1]
 
-  buildHtmlAttributeCompletions: (attributeName, attributeObject) ->
+  buildHtmlAttributeCompletion: (attributeName, attributeObject) ->
     snippet = "#{attributeName}=\""
     if attributeObject.options?.length is 1
       snippet += "#{attributeObject.options[0]}\"$1"
