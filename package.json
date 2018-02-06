@@ -12,8 +12,9 @@
     "atom": ">=1.0.0 <2.0.0"
   },
   "dependencies": {
-    "language-typo3-fluid": "^0.2.0"
+    "atom-package-deps": ">=4.0.0",
   },
+  "package-deps": ["language-typo3-fluid"],
   "providedServices": {
     "autocomplete.provider": {
       "versions": {

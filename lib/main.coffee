@@ -6,6 +6,9 @@ main =
   subscriptions: null
 
   activate: ->
+    require('atom-package-deps').install('autocomplete-typo3-fluid')
+      .then ->
+        console.log('Atom package language-typo3-fluid is installed.')
     @subscriptions = new CompositeDisposable
     @subscriptions.add atom.commands.add 'atom-workspace',
       'autocomplete-typo3-fluid:rebuildConfigSchema': => @rebuildConfigSchema()
