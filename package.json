@@ -11,12 +11,6 @@
   "engines": {
     "atom": ">=1.0.0 <2.0.0"
   },
-  "dependencies": {
-    "atom-package-deps": ">=4.0.0"
-  },
-  "package-deps": [
-    "language-typo3-fluid"
-  ],
   "providedServices": {
     "autocomplete.provider": {
       "versions": {
