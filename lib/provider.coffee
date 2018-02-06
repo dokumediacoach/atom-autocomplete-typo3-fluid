@@ -291,13 +291,17 @@ provider =
     snippet = viewHelperObject.snippets[tagOrInline]
     if tagOrInline is 'tag' and viewHelperObject.snippets.hasOwnProperty 'endTagEnd'
       snippet += "</#{namespacePrefix}:#{viewHelperObject.snippets.endTagEnd}"
+    indicesArray = []
+    prefixOffset = namespacePrefix.length + 1
+    for index in viewHelperObject.characterMatchIndices
+      indicesArray.push index + prefixOffset
     completion =
       snippet: snippet
       displayText: "#{namespacePrefix}:#{name}"
       type: 'function'
       rightLabel: namespace
       description: viewHelperObject.description
-      characterMatchIndices: viewHelperObject.characterMatchIndices
+      characterMatchIndices: indicesArray
 
   buildViewHelperPropertyCompletion: (tagOrInline, name, viewHelperName, viewHelperPropertyObject) ->
     snippet: viewHelperPropertyObject.snippets[tagOrInline]
