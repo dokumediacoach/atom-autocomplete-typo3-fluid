@@ -187,7 +187,6 @@ module.exports =
   optimizeCompletions: ->
     autoInsertMandatoryProperties = atom.config.get('autocomplete-typo3-fluid.autoInsertMandatoryProperties')
     eddEndTagOnElementCompletion = atom.config.get('autocomplete-typo3-fluid.eddEndTagOnElementCompletion')
-    nonWordCharacters = atom.config.get('editor.nonWordCharacters', scope: ['text.html.typo3-fluid'])
     for namespace, namespaceObject of @completions.namespaces
       namespaceObject.viewHelperProperties = {}
       for viewHelperName, viewHelperObject of namespaceObject.viewHelpers.global
@@ -220,7 +219,6 @@ module.exports =
           delete viewHelperObject.mandatoryProperties
         if not viewHelperObject.description
           viewHelperObject.description = "ViewHelper #{viewHelperName}"
-        viewHelperObject.characterMatchIndices = @getCharacterMatchIndices viewHelperName, nonWordCharacters
 
       for viewHelperName, propertiesObject of namespaceObject.viewHelperProperties
         for propertyName, propertyObject of propertiesObject
@@ -229,7 +227,6 @@ module.exports =
             inline: "#{propertyName}: $1"
           if not propertyObject.hasOwnProperty('description') or not propertyObject.description
             propertyObject.description = "ViewHelper property #{propertyName}"
-          propertyObject.characterMatchIndices = @getCharacterMatchIndices propertyName, nonWordCharacters
 
       if namespaceObject.hasOwnProperty('elementRules') and namespaceObject.elementRules.hasOwnProperty('localViewHelpers')
         namespaceObject.viewHelpers.local = {}
@@ -239,10 +236,3 @@ module.exports =
             namespaceObject.viewHelpers.local[localName] = globalCopy
             delete namespaceObject.viewHelpers.global[localName]
         delete namespaceObject.elementRules.localViewHelpers
-
-  getCharacterMatchIndices: (completionName, nonWordCharacters) ->
-    returnArray = []
-    for character, index in completionName
-      if not nonWordCharacters.includes character
-        returnArray.push index
-    returnArray

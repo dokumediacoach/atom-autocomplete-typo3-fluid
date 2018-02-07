@@ -142,7 +142,6 @@ provider =
     displayText: "#{namespacePrefix}:#{parent} end tag"
     type: 'function'
     description: "close #{namespacePrefix}:#{parent} ViewHelper"
-    characterMatchIndices: [0..parent.length-1]
 
   getSelfClosingTagCompletion: (elementName, bufferPosition, editor) ->
     textBuffer = editor.getBuffer()
@@ -194,7 +193,6 @@ provider =
       displayText: namespacePrefix
       type: 'attribute'
       description: object.description
-      characterMatchIndices: [0..namespacePrefix.length-1]
 
   getViewHelperCompletions: (tagOrInline, viewHelperStartText, bufferPosition, editor) ->
     startPattern = if tagOrInline is 'tag' then tagViewHelperNameStartPattern else inlineViewHelperNameStartPattern
@@ -291,17 +289,12 @@ provider =
     snippet = viewHelperObject.snippets[tagOrInline]
     if tagOrInline is 'tag' and viewHelperObject.snippets.hasOwnProperty 'endTagEnd'
       snippet += "</#{namespacePrefix}:#{viewHelperObject.snippets.endTagEnd}"
-    indicesArray = []
-    prefixOffset = namespacePrefix.length + 1
-    for index in viewHelperObject.characterMatchIndices
-      indicesArray.push index + prefixOffset
     completion =
       snippet: snippet
       displayText: "#{namespacePrefix}:#{name}"
       type: 'function'
       rightLabel: namespace
       description: viewHelperObject.description
-      characterMatchIndices: indicesArray
 
   buildViewHelperPropertyCompletion: (tagOrInline, name, viewHelperName, viewHelperPropertyObject) ->
     snippet: viewHelperPropertyObject.snippets[tagOrInline]
@@ -309,7 +302,6 @@ provider =
     type: 'attribute'
     rightLabel: "#{viewHelperName} property"
     description: viewHelperPropertyObject.description
-    characterMatchIndices: viewHelperPropertyObject.characterMatchIndices
 
   getViewHelperNamespaceFromNamespacePrefix: (namespacePrefix, bufferPosition, editor) ->
     textBuffer = editor.getBuffer()
@@ -358,7 +350,6 @@ provider =
   buildHtmlAttributeValueCompletion: (value) ->
     text: value
     type: 'value'
-    characterMatchIndices: [0..value.length-1]
 
   buildHtmlAttributeCompletion: (attributeName, attributeObject) ->
     snippet = "#{attributeName}=\""
@@ -371,7 +362,6 @@ provider =
       displayText: attributeName
       type: 'attribute'
       description: attributeObject.description
-      characterMatchIndices: [0..attributeName.length-1]
 
   ## Some more general helper methods and therefore better commented
 
